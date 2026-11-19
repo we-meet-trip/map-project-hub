@@ -31,7 +31,7 @@ class LatLng(BaseModel):
 class MobilityRadiusRequest(BaseModel):
     """MobilityRadiusRequest — 이동수단 반경 필터 요청.
 
-    mobility: 이동수단 문자열(foot/walk/bicycle/kickboard/car/transit).
+    mobility: 이동수단 문자열(foot/walk/bicycle/kickboard/scooter/car/transit).
     loc: 반경 기준 출발지(origin)와 필터 대상 후보(candidates, 각 후보는
         lat/lng 를 가진다) 를 함께 감싼 봉투.
     """
