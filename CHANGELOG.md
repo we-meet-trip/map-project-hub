@@ -15,7 +15,7 @@
 ### 변경
 - 이름을 `map-project-hub` 로 통일했다: import 패키지 `map_project_hub`, OpenAPI 제목, 이미지 이름, 두루누비 호출 앱 이름.
 - 환경변수 이름을 접두 체계로 바꿨다: hub 만 읽는 값은 `HUB_`, 여러 서비스가 함께 읽는 키·주소·토큰은 `MAP_PROJECT_`. 옛 이름은 읽지 않는다.
-- 좌표는 봉투로만 받는다. 평문 좌표 인자(`lat`·`lng`·`start_*`·`end_*`·평문 `legs`·`origin`·`candidates`)를 지웠다.
+- 좌표는 봉투로만 받는다. 평문 좌표 인자(`lat`·`lng`·`start_*`·`end_*`·평문 `legs`·`origin`·`candidates`·금지 구역 판정의 `polyline`)를 지웠다.
 - 기상청 키는 필수가 아니다. 비어 있으면 예보 수집을 건너뛴다.
 - 캐시 키의 손으로 올리던 판 번호를 응답 모델 스키마 지문으로 바꿨다.
 - DB 격리 계약 검사(CI)를 hub 단독으로 줄였다. 서비스 간 경계는 map-project-infra 의 통합 검사가 맡는다.
