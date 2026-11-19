@@ -41,6 +41,9 @@ Revises: 0006_weather_nowcast_snap
   - alembic upgrade head 가 0006 다음으로 본 리비전을 적용한다.
   - 교정 대상은 hub_data.subscribed_grids 의 다섯 행뿐이며, 격자 좌표와
     기온 코드는 건드리지 않는다.
+
+출처(중기 육상·기온 예보 구역코드): 기상청, 「기상청_중기예보 조회서비스」 참고문서의 예보 구역코드(공공데이터포털 데이터 ID 15059468, https://www.data.go.kr/data/15059468/openapi.do),
+공공누리 제1유형(출처표시). 자세한 내용은 docs/data.md.
 """
 from __future__ import annotations
 

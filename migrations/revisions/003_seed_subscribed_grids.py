@@ -10,6 +10,9 @@ PK 를 FK 로 참조하므로 본 revision 은 반드시 0002 이후에 적용�
 
 label 은 시군구 단위 또는 광역(영서/영동 등) 단위로 사람이 식별 가능한
 이름이며 UNIQUE 제약을 받는다.
+
+출처(중기 육상·기온 예보 구역코드): 기상청, 「기상청_중기예보 조회서비스」 참고문서의 예보 구역코드(공공데이터포털 데이터 ID 15059468, https://www.data.go.kr/data/15059468/openapi.do),
+공공누리 제1유형(출처표시). 자세한 내용은 docs/data.md.
 """
 from __future__ import annotations
 
