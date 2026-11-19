@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import json
 import logging
 from datetime import date, datetime, timedelta
 from typing import Literal
@@ -959,6 +960,18 @@ def _brd_div_for_mobility(mobility: str | None) -> str | None:
     return None
 
 
+def _model_shape(model) -> str:
+    """캐시에 담는 값의 모양(필드·타입)을 짧은 지문으로 만든다.
+
+    담아 둔 값의 모양이 바뀌었는데 키가 그대로면 옛 항목이 그대로 읽혀
+    필드가 빈 채 나가고, 그 값을 쓰는 쪽이 깨진다. 응답 모델의 스키마
+    지문을 키에 넣어 두면 모델이 바뀌는 순간 새 키로 갈리고 옛 항목은
+    TTL 로 사라진다 — 손으로 판 번호를 올리다 빠뜨릴 일이 없다.
+    """
+    schema = json.dumps(model.model_json_schema(), sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(schema.encode("utf-8")).hexdigest()[:12]
+
+
 def _provider_cache_key(key: str) -> str:
     """기존 자동 스텁 캐시를 읽지 않고 명시 스텁과 실측 결과도 분리한다."""
     mode = "stub" if settings.PLACES_STUB_MODE and not settings.AUTH_ENFORCED else "live"
@@ -1575,7 +1588,8 @@ def _route_cache_key(mode: str, leg: DirectionsLeg) -> str:
     digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()
     version = f"{settings.OSRM_DATA_VERSION or 'UNKNOWN'}|{settings.OSRM_GRAPH_FINGERPRINT or 'UNKNOWN'}"
     graph_key = hashlib.sha256(version.encode("utf-8")).hexdigest()[:24]
-    return _provider_cache_key(f"osrm:{profile}:v3:{graph_key}:{digest}")
+    shape = _model_shape(DirectionsRoute)
+    return _provider_cache_key(f"osrm:{profile}:{shape}:{graph_key}:{digest}")
 
 
 async def _route_one_leg(
@@ -1866,13 +1880,10 @@ def _transit_routes_cache_key(
     """통합 길찾기 캐시 키. /v1/transit/subway 와 네임스페이스를 분리해
     같은 좌표 요청이 서로 다른 캐시 항목(지하철 전용 vs 전체)을 쓰게 한다.
 
-    네임스페이스에 판(v2)을 박는다. 담아 둔 값의 모양이 바뀌면 예전 판이
-    그대로 읽혀 필드가 비어 오고, 그 값을 쓰는 쪽이 깨진다. 판을 올리면
-    지우러 다니지 않아도 새 키로 갈리고 옛 항목은 TTL 로 사라진다.
-    거리 필드(distance_m·subway_distance_m·…)를 더하면서 v2 가 됐다.
-    경로 후보에 map_obj(실제 노선 좌표 조회용 토큰)를 더하면서 v3 가 됐다 —
-    v2 항목이 그대로 읽히면 6시간 동안 map_obj 가 빠진 채 나가 앱이 노선
-    좌표를 한 번도 못 부른다.
+    네임스페이스에 경로 후보 모델의 모양 지문(_model_shape)을 넣는다. 거리
+    필드나 노선 좌표 조회용 토큰(map_obj) 같은 필드를 더했는데 옛 항목이
+    그대로 읽히면, 캐시 수명(기본 6시간) 동안 그 필드가 빠진 채 나가 앱이
+    거리 필터를 못 쓰거나 노선 좌표를 한 번도 못 부른다.
     """
     d = settings.ODSAY_CACHE_COORD_DIGITS
     raw = (
@@ -1880,7 +1891,8 @@ def _transit_routes_cache_key(
         f"|{round(goal_lat, d)}|{round(goal_lng, d)}"
     )
     digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()
-    return _provider_cache_key(f"odsay:routes:v3:{digest}")
+    shape = _model_shape(TransitRouteOption)
+    return _provider_cache_key(f"odsay:routes:{shape}:{digest}")
 
 
 async def _odsay_retry_with_fallback_routes(
@@ -2087,10 +2099,11 @@ def _transit_lane_cache_key(map_obj: str) -> str:
 
     좌표가 아니라 map_obj 로 만든다. 노선 모양은 노선·정류장 구간으로
     정해지므로, 출발점이 조금씩 다른 사람들도 같은 구간을 타면 한 칸을
-    같이 쓴다 — 하루 호출 상한을 아끼는 쪽으로 작용한다.
+    같이 쓴다 — 하루 호출 상한을 아끼는 쪽으로 작용한다. 담는 값은 발급처가
+    준 노선 원본이라 모양이 우리 코드로 바뀌지 않아 모양 지문은 넣지 않는다.
     """
     digest = hashlib.sha256(map_obj.encode("utf-8")).hexdigest()
-    return _provider_cache_key(f"odsay:lane:v1:{digest}")
+    return _provider_cache_key(f"odsay:lane:{digest}")
 
 
 async def _transit_lane(map_obj: str) -> tuple[str, list[dict]]:

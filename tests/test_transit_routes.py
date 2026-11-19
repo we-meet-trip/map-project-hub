@@ -40,6 +40,8 @@ from map_project_hub.routers.hub_routers import (
     _transit_routes_cache_key,
 )
 from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.routers import hub_routers
+from map_project_hub.schemas.hub_schemas import TransitRouteOption
 
 # 서울 시청 → 여의도역. 국내 범위 안이면 값 자체는 의미가 없다.
 START = {"start_lat": 37.5665, "start_lng": 126.9780}
@@ -664,10 +666,16 @@ def test_filter_survives_missing_distance_fields():
     assert _filter_routes_by_mode([old, new], "bus") == [old]
 
 
-def test_transit_routes_cache_key_carries_version():
-    """캐시 키에 판이 박혀 있다 — 담는 값의 모양이 바뀌면 올린다."""
+def test_transit_routes_cache_key_follows_value_shape():
+    """캐시 키에 담는 값의 모양 지문이 들어 있고, 모델이 바뀌면 지문도 바뀐다."""
+    shape = hub_routers._model_shape(TransitRouteOption)
     key = _transit_routes_cache_key(37.5665, 126.9780, 37.5228, 126.9227)
-    assert key.startswith("odsay:routes:v3:")
+    assert key.startswith(f"odsay:routes:{shape}:")
+
+    class Wider(TransitRouteOption):
+        added_field: int = 0
+
+    assert hub_routers._model_shape(Wider) != shape
 
 
 @pytest.mark.parametrize("mode", ["all", "subway", "bus"])
