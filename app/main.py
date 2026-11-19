@@ -52,7 +52,6 @@ from app.hub_dependencies import (
     set_place_clients,
     set_pm_client,
     set_seoul_bike_client,
-    set_weather_clients,
 )
 from app.place_stubs import places_stub_active
 from app.route_stubs import routing_stub_active, transit_stub_active
@@ -283,7 +282,6 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     airkorea = (
         None if not air_key or places_stub_active(air_key) else AirKoreaClient(air_key)
     )
-    set_weather_clients(kma_now, airkorea)
 
     # 지하철 경로(ODsay) 클라이언트. 키가 비어 있으면
     # 클라이언트를 만들지 않는다. 예비 키를 채워 두면 두 번째 클라이언트를

@@ -8,10 +8,8 @@ from __future__ import annotations
 
 from app.cache.hub_cache import RedisCache
 from app.clients.hub_clients import (
-    AirKoreaClient,
     GooglePlacesClient,
     KakaoLocalClient,
-    KMAClient,
     NaverBlogClient,
     OdsayClient,
     OsrmClient,
@@ -28,10 +26,6 @@ _cache: RedisCache | None = None
 # 그 판단(스텁 사용)은 라우터가 한다.
 _osrm_foot: OsrmClient | None = None
 _osrm_bicycle: OsrmClient | None = None
-# 현재 날씨 조회용. 실황은 폴링이 아니라 요청 때마다 부르므로 스케줄러가
-# 쓰는 인스턴스와 별도로 요청 경로용 슬롯을 둔다.
-_kma: KMAClient | None = None
-_airkorea: AirKoreaClient | None = None
 # 지하철 경로/따릉이 대여소/공유 킥보드. 키가 없어 스텁으로 동작하면 None 으로
 # 남고, 그 판단은 라우터가 한다.
 _odsay: OdsayClient | None = None
@@ -115,28 +109,6 @@ def get_osrm_client(mode: str) -> OsrmClient | None:
     return None
 
 
-def set_weather_clients(
-    kma: KMAClient | None, airkorea: AirKoreaClient | None
-) -> None:
-    """lifespan startup 에서 현재 날씨 조회용 클라이언트를 주입한다.
-
-    키가 없어 스텁으로 동작하면 None 이 주입되고, 그 판단은 라우터가 한다.
-    """
-    global _kma, _airkorea
-    _kma = kma
-    _airkorea = airkorea
-
-
-def get_kma_client() -> KMAClient | None:
-    """주입된 KMA 클라이언트를 돌려준다. 미설정이면 None."""
-    return _kma
-
-
-def get_airkorea_client() -> AirKoreaClient | None:
-    """주입된 대기오염 클라이언트를 돌려준다. 미설정이면 None."""
-    return _airkorea
-
-
 def set_odsay_clients(
     odsay: OdsayClient | None, fallback: OdsayClient | None
 ) -> None:
@@ -191,15 +163,13 @@ def get_seoul_bike_client() -> SeoulBikeClient | None:
 def clear_place_clients() -> None:
     """lifespan shutdown 에서 슬롯을 비운다."""
     global _kakao, _naver, _google, _cache, _osrm_foot, _osrm_bicycle
-    global _kma, _airkorea, _odsay, _odsay_fallback, _seoul_bike, _pm
+    global _odsay, _odsay_fallback, _seoul_bike, _pm
     _kakao = None
     _naver = None
     _google = None
     _cache = None
     _osrm_foot = None
     _osrm_bicycle = None
-    _kma = None
-    _airkorea = None
     _odsay = None
     _odsay_fallback = None
     _seoul_bike = None

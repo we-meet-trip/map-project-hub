@@ -16,6 +16,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
+import httpx
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -326,7 +327,7 @@ def test_weather_now_does_not_call_upstream(monkeypatch):
     """
     called: list = []
 
-    def _boom(*_a, **_k):
+    async def _boom(*_a, **_k):
         called.append(1)
         raise AssertionError("조회 경로가 발급처를 불렀다")
 
@@ -335,10 +336,9 @@ def test_weather_now_does_not_call_upstream(monkeypatch):
         nowcast={"temp_c": 28.0, "pty": 0, "observed_at": _observed(0.5)},
         region=_Region(),
     )
-    # 발급처 접근 통로를 전부 막아 둔다.
-    for name in ("get_kma_client", "get_airkorea_client"):
-        if hasattr(hub_routers, name):
-            monkeypatch.setattr(hub_routers, name, _boom)
+    # 발급처 클라이언트는 모두 httpx.AsyncClient 로 나간다. 그 송신 지점을
+    # 막아 두면 어느 클라이언트를 거치든 바깥 호출이 있으면 실패한다.
+    monkeypatch.setattr(httpx.AsyncClient, "send", _boom)
 
     assert _get().status_code == 200
     assert not called
