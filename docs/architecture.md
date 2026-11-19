@@ -9,7 +9,7 @@ map-project-hub 는 MAP 의 외부 데이터 게이트웨이다. 관광·날씨�
 
 ## 1. 요청 처리 순서
 
-1. **가드** — `/v1/*` 는 `public_guard`(`map_project_hub/routers/guards.py`): `HUB_AUTH_ENFORCED=true` 일 때만 헤더 `X-Internal-Token` 을 `MAP_PROJECT_INTERNAL_SERVICE_TOKEN` 과 상수 시간 비교한다(불일치 401). `/internal/*` 는 `internal_admin_guard`(`map_project_hub/routers/internal_router.py`): 사설 대역(`HUB_INTERNAL_TRUSTED_CIDRS`)에서 온 요청이고, 관리 전용 토큰 `MAP_PROJECT_HUB_ADMIN_INTERNAL_TOKEN` 이 설정돼 있으며 일반 토큰과 다르고, 헤더가 그 값과 같아야 한다(아니면 403). `/health`·`/health/ready`·`/metrics` 는 가드 밖이다.
+1. **가드** — `/v1/*` 는 `public_guard`(`map_project_hub/routers/guards.py`): `HUB_AUTH_ENFORCED=true` 일 때만 헤더 `X-Internal-Token` 을 `MAP_PROJECT_INTERNAL_SERVICE_TOKEN` 과 상수 시간 비교한다(불일치 401). `/internal/*` 는 `internal_admin_guard`(`map_project_hub/routers/internal_router.py`): 사설 대역(`HUB_INTERNAL_TRUSTED_CIDRS`)에서 온 요청이고, 관리 전용 토큰 `MAP_PROJECT_HUB_ADMIN_INTERNAL_TOKEN` 이 설정돼 있으며 일반 토큰과 다르고, 헤더가 그 값과 같아야 한다(아니면 403). `/health`·`/health/ready`·`/metrics` 는 가드 밖이다. 관리 경로를 통째로 막으려면 관리 전용 토큰을 비워 둔다(비어 있으면 모두 403). 빈 환경변수는 '설정하지 않음'으로 읽히므로 `HUB_INTERNAL_TRUSTED_CIDRS=` 처럼 비워 두면 기본 사설 대역이 쓰인다.
 2. **좌표 봉투 열기** — 좌표가 담긴 요청은 `loc` 하나로 온다. `map_project_hub/routers/location_params.py` 가 AES-GCM 봉투를 열고(`map_project_hub/crypto/location_seal.py`), 열어 본 좌표가 국내 범위(위도 33~43, 경도 124~132)인지 다시 본다. 봉투가 없거나 열 수 없거나 범위 밖이면 400 이다. 평문 좌표를 받는 길은 없다.
 3. **조회** — 자료마다 아래 세 층 가운데 하나 이상을 쓴다.
    - **Redis 캐시**: 외부 API 응답을 키별 TTL 로 담는다(장소·주소·후기·사진 식별자·경로·대중교통·따릉이·킥보드).
