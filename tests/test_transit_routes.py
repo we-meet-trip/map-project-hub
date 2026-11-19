@@ -472,7 +472,7 @@ def _odsay_client_with(handler) -> OdsayClient:
 def test_load_lane_sends_prefixed_map_object_and_returns_lanes():
     """mapObject 에 0:0@ 접두사를 붙여 보내고, result.lane 을 그대로 돌려준다.
 
-    접두사는 실호출로 확인된 형식이다(DEV_LOG §20) — 접두사를 빠뜨리면
+    접두사는 실호출로 확인된 형식이다 — 접두사를 빠뜨리면
     -8 mapObject 형식 오류로 실패한다.
     """
     seen: dict = {}
