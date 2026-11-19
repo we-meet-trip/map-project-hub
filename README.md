@@ -1,4 +1,4 @@
-# map-service-hub
+# map-project-hub
 
 MAP 서비스의 외부 데이터 게이트웨이. FastAPI + PostGIS + APScheduler. 외부 API를 단일 진입점으로 캡슐화하며 L1 Redis 캐시·결정적 룰 엔진을 제공한다. (도로를 따라가는 경로는 hub가 라우팅 엔진에 직접 물어 `/v1/directions/batch` 로 제공한다. 엔진이 없으면 해당 구간을 비워 응답하고 BFF가 직선으로 접는다.)
 
@@ -14,7 +14,7 @@ MAP 서비스의 외부 데이터 게이트웨이. FastAPI + PostGIS + APSchedul
 ## 폴더 구조
 
 ```
-map-service-hub/
+map-project-hub/
 ├── Dockerfile                    Python 3.12-slim + libgeos/libproj
 ├── requirements.txt              핵심 의존성 (fastapi · sqlalchemy[asyncio] · geoalchemy2 · alembic · apscheduler 등)
 └── map_project_hub/
@@ -37,11 +37,11 @@ map-service-hub/
     └── db/hub_db.py              SQLAlchemy async engine + PostGIS 모델
 ```
 
-## 실행 (단독 빌드 — 통합 실행은 map-service-infra 사용 권장)
+## 실행 (단독 빌드 — 통합 실행은 map-project-infra 사용 권장)
 
 ```bash
-docker build -t map-service-hub:dev .
-docker run --rm -p 8001:8000 --env-file ../map-service-infra/.env map-service-hub:dev
+docker build -t map-project-hub:dev .
+docker run --rm -p 8001:8000 --env-file ../map-project-infra/.env map-project-hub:dev
 curl http://127.0.0.1:8001/health
 ```
 

@@ -55,7 +55,7 @@ def test_opens_sealed_point():
 
 def test_opens_value_sealed_by_java(monkeypatch):
     """자바가 만든 봉투를 그대로 연다."""
-    # 만드는 쪽은 자바라 여기서 만들 수 없다. 아래 값은 map-service-user 에서
+    # 만드는 쪽은 자바라 여기서 만들 수 없다. 아래 값은 map-project-user 에서
     # `./gradlew test --tests '*LocationSealTest*'` 를 돌려 그 검사가 감싼 값을
     # 그대로 옮겨 적은 것이다. 형식을 바꿀 때는 같은 방법으로 다시 뽑아 갱신한다.
     #

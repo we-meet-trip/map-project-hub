@@ -376,7 +376,7 @@ class DurunubiClient:
     COURSE_EP = "/courseList"
     # 필수 공통 파라미터. OS 구분과 호출 앱명을 식별값으로 보낸다.
     MOBILE_OS = "ETC"
-    MOBILE_APP = "map-service"
+    MOBILE_APP = "map-project"
 
     def __init__(
         self,

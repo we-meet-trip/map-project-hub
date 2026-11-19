@@ -413,7 +413,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 # 외부 라이브러리(uvicorn)가 임포트해야 하는 ASGI 객체.
 # title/version 은 OpenAPI 문서에도 노출된다.
-app = FastAPI(title="map-service-hub", version="0.0.1-poc", lifespan=lifespan)
+app = FastAPI(title="map-project-hub", version="1.0.0", lifespan=lifespan)
 # 외부 게이트웨이 라우터(hub_routers) → /weather 등 공개 endpoint.
 app.include_router(hub_router)
 # 룰 엔진 라우터(rules_router) → /v1/rules/* 공개 endpoint.

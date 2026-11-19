@@ -1,6 +1,6 @@
 """내부 운영(admin) 엔드포인트 요청/응답 스키마.
 
-map-service-admin(운영 콘솔)이 hub 의 hub_data 쓰기를 위임 호출할 때
+map-project-admin(운영 콘솔)이 hub 의 hub_data 쓰기를 위임 호출할 때
 사용하는 /internal/* (grids 토글·forbidden_zones CRUD)의 Pydantic 모델.
 
 경계: hub 는 hub_data 의 유일한 쓰기 소유자이며, admin 은 본

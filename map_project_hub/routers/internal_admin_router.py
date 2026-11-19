@@ -1,6 +1,6 @@
 """내부 운영(admin) 라우터 — hub_data 쓰기 위임 엔드포인트.
 
-map-service-admin(운영 콘솔)이 위임 호출하는 hub_data 쓰기 작업을 제공한다:
+map-project-admin(운영 콘솔)이 위임 호출하는 hub_data 쓰기 작업을 제공한다:
   PATCH  /internal/grids/{grid_id}         — subscribed_grids.is_active 토글
   GET    /internal/forbidden-zones         — 금지구역 목록
   GET    /internal/forbidden-zones/{id}    — 금지구역 단건

@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# map-service-hub — FastAPI + PostGIS + APScheduler 외부 데이터 게이트웨이
+# map-project-hub — FastAPI + PostGIS + APScheduler 외부 데이터 게이트웨이
 #
 # 빌드 전략: 멀티스테이지 (builder → runtime).
 #   builder 단계에서 wheel을 준비한다. Shapely는 GEOS를 포함한 공식 binary wheel만 허용한다.
