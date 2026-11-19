@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Title: gateway Pages: 1 -->
+<svg width="949pt" height="432pt"
+ viewBox="0.00 0.00 949.00 432.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(21.6 410.6)">
+<title>gateway</title>
+<polygon fill="#ffffff" stroke="none" points="-21.6,21.6 -21.6,-410.6 927.73,-410.6 927.73,21.6 -21.6,21.6"/>
+<text xml:space="preserve" text-anchor="middle" x="453.06" y="-367.9" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="18.00" fill="#1f2328">hub 게이트웨이 구성</text>
+<g id="clust1" class="cluster">
+<title>cluster_hub</title>
+<path fill="#ffffff" stroke="#0969da" d="M41.38,-109.25C41.38,-109.25 657.38,-109.25 657.38,-109.25 663.38,-109.25 669.38,-115.25 669.38,-121.25 669.38,-121.25 669.38,-279.5 669.38,-279.5 669.38,-285.5 663.38,-291.5 657.38,-291.5 657.38,-291.5 41.38,-291.5 41.38,-291.5 35.38,-291.5 29.38,-285.5 29.38,-279.5 29.38,-279.5 29.38,-121.25 29.38,-121.25 29.38,-115.25 35.38,-109.25 41.38,-109.25"/>
+<text xml:space="preserve" text-anchor="middle" x="91" y="-274.2" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="14.00" fill="#1f2328">map&#45;project&#45;hub</text>
+</g>
+<!-- user -->
+<g id="node1" class="node">
+<title>user</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M608,-359.25C608,-359.25 490.75,-359.25 490.75,-359.25 484.75,-359.25 478.75,-353.25 478.75,-347.25 478.75,-347.25 478.75,-335.25 478.75,-335.25 478.75,-329.25 484.75,-323.25 490.75,-323.25 490.75,-323.25 608,-323.25 608,-323.25 614,-323.25 620,-329.25 620,-335.25 620,-335.25 620,-347.25 620,-347.25 620,-353.25 614,-359.25 608,-359.25"/>
+<text xml:space="preserve" text-anchor="middle" x="549.38" y="-337.35" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">map&#45;project&#45;user (BFF)</text>
+</g>
+<!-- public -->
+<g id="node4" class="node">
+<title>public</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M648.88,-258.25C648.88,-258.25 449.88,-258.25 449.88,-258.25 443.88,-258.25 437.88,-252.25 437.88,-246.25 437.88,-246.25 437.88,-232.25 437.88,-232.25 437.88,-226.25 443.88,-220.25 449.88,-220.25 449.88,-220.25 648.88,-220.25 648.88,-220.25 654.88,-220.25 660.88,-226.25 660.88,-232.25 660.88,-232.25 660.88,-246.25 660.88,-246.25 660.88,-252.25 654.88,-258.25 648.88,-258.25"/>
+<text xml:space="preserve" text-anchor="middle" x="549.38" y="-242.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">/v1/* 공개 경로</text>
+<text xml:space="preserve" text-anchor="middle" x="549.38" y="-227.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">날씨·장소·후기·사진·경로·대중교통·이동수단</text>
+</g>
+<!-- user&#45;&gt;public -->
+<g id="edge10" class="edge">
+<title>user&#45;&gt;public</title>
+<path fill="none" stroke="#57606a" d="M549.38,-322.83C549.38,-307.44 549.38,-284.76 549.38,-267.06"/>
+<polygon fill="#57606a" stroke="#57606a" points="551.83,-267.34 549.38,-260.34 546.93,-267.34 551.83,-267.34"/>
+<text xml:space="preserve" text-anchor="middle" x="532.5" y="-293.99" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">loc 봉투</text>
+</g>
+<!-- lane -->
+<g id="node7" class="node">
+<title>lane</title>
+<path fill="#fbefff" stroke="#8250df" stroke-width="1.4" stroke-dasharray="5,2" d="M649.62,-154.25C649.62,-154.25 533.12,-154.25 533.12,-154.25 527.12,-154.25 521.12,-148.25 521.12,-142.25 521.12,-142.25 521.12,-130.25 521.12,-130.25 521.12,-124.25 527.12,-118.25 533.12,-118.25 533.12,-118.25 649.62,-118.25 649.62,-118.25 655.62,-118.25 661.62,-124.25 661.62,-130.25 661.62,-130.25 661.62,-142.25 661.62,-142.25 661.62,-148.25 655.62,-154.25 649.62,-154.25"/>
+<text xml:space="preserve" text-anchor="middle" x="591.38" y="-132.35" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">노선 좌표 조회 (기본 꺼짐)</text>
+</g>
+<!-- user&#45;&gt;lane -->
+<g id="edge11" class="edge">
+<title>user&#45;&gt;lane</title>
+<path fill="none" stroke="#57606a" stroke-dasharray="5,2" d="M620.61,-330.77C644.21,-323.86 668.08,-311.96 682.38,-291.5 700.51,-265.54 695.16,-249.22 682.38,-220.25 671.25,-195.05 648.28,-174.2 628.21,-159.7"/>
+<polygon fill="#57606a" stroke="#57606a" points="629.63,-157.7 622.49,-155.7 626.82,-161.72 629.63,-157.7"/>
+</g>
+<!-- agent -->
+<g id="node2" class="node">
+<title>agent</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M413.38,-359.25C413.38,-359.25 289.38,-359.25 289.38,-359.25 283.38,-359.25 277.38,-353.25 277.38,-347.25 277.38,-347.25 277.38,-335.25 277.38,-335.25 277.38,-329.25 283.38,-323.25 289.38,-323.25 289.38,-323.25 413.38,-323.25 413.38,-323.25 419.38,-323.25 425.38,-329.25 425.38,-335.25 425.38,-335.25 425.38,-347.25 425.38,-347.25 425.38,-353.25 419.38,-359.25 413.38,-359.25"/>
+<text xml:space="preserve" text-anchor="middle" x="351.38" y="-337.35" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">map&#45;project&#45;agent (추천)</text>
+</g>
+<!-- agent&#45;&gt;user -->
+<!-- agent&#45;&gt;public -->
+<g id="edge12" class="edge">
+<title>agent&#45;&gt;public</title>
+<path fill="none" stroke="#57606a" d="M386.32,-322.6C419.38,-305.9 469.15,-280.77 505,-262.66"/>
+<polygon fill="#57606a" stroke="#57606a" points="505.94,-264.93 511.08,-259.59 503.73,-260.56 505.94,-264.93"/>
+<text xml:space="preserve" text-anchor="middle" x="420.3" y="-293.91" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">날씨·장소·후기</text>
+</g>
+<!-- rules -->
+<g id="node5" class="node">
+<title>rules</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M382.88,-258.25C382.88,-258.25 249.88,-258.25 249.88,-258.25 243.88,-258.25 237.88,-252.25 237.88,-246.25 237.88,-246.25 237.88,-232.25 237.88,-232.25 237.88,-226.25 243.88,-220.25 249.88,-220.25 249.88,-220.25 382.88,-220.25 382.88,-220.25 388.88,-220.25 394.88,-226.25 394.88,-232.25 394.88,-232.25 394.88,-246.25 394.88,-246.25 394.88,-252.25 388.88,-258.25 382.88,-258.25"/>
+<text xml:space="preserve" text-anchor="middle" x="316.38" y="-242.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">/v1/rules/*</text>
+<text xml:space="preserve" text-anchor="middle" x="316.38" y="-227.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">반경·실내 가점·금지 구역·체류</text>
+</g>
+<!-- agent&#45;&gt;rules -->
+<g id="edge13" class="edge">
+<title>agent&#45;&gt;rules</title>
+<path fill="none" stroke="#57606a" d="M345.28,-322.83C339.84,-307.3 331.81,-284.35 325.59,-266.58"/>
+<polygon fill="#57606a" stroke="#57606a" points="328,-266.05 323.38,-260.25 323.38,-267.67 328,-266.05"/>
+<text xml:space="preserve" text-anchor="middle" x="317.22" y="-294.14" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">loc 봉투</text>
+</g>
+<!-- admin -->
+<g id="node3" class="node">
+<title>admin</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M202.12,-359.25C202.12,-359.25 52.62,-359.25 52.62,-359.25 46.63,-359.25 40.62,-353.25 40.62,-347.25 40.62,-347.25 40.62,-335.25 40.62,-335.25 40.62,-329.25 46.62,-323.25 52.62,-323.25 52.62,-323.25 202.12,-323.25 202.12,-323.25 208.12,-323.25 214.12,-329.25 214.12,-335.25 214.12,-335.25 214.12,-347.25 214.12,-347.25 214.12,-353.25 208.12,-359.25 202.12,-359.25"/>
+<text xml:space="preserve" text-anchor="middle" x="127.38" y="-337.35" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">map&#45;project&#45;admin (운영 콘솔)</text>
+</g>
+<!-- admin&#45;&gt;agent -->
+<!-- internal -->
+<g id="node6" class="node">
+<title>internal</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M182.88,-258.25C182.88,-258.25 49.88,-258.25 49.88,-258.25 43.88,-258.25 37.88,-252.25 37.88,-246.25 37.88,-246.25 37.88,-232.25 37.88,-232.25 37.88,-226.25 43.88,-220.25 49.88,-220.25 49.88,-220.25 182.88,-220.25 182.88,-220.25 188.88,-220.25 194.88,-226.25 194.88,-232.25 194.88,-232.25 194.88,-246.25 194.88,-246.25 194.88,-252.25 188.88,-258.25 182.88,-258.25"/>
+<text xml:space="preserve" text-anchor="middle" x="116.38" y="-242.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">/internal/*</text>
+<text xml:space="preserve" text-anchor="middle" x="116.38" y="-227.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">즉시 수집·구독 격자·금지 구역</text>
+</g>
+<!-- admin&#45;&gt;internal -->
+<g id="edge14" class="edge">
+<title>admin&#45;&gt;internal</title>
+<path fill="none" stroke="#57606a" d="M125.46,-322.83C123.77,-307.44 121.27,-284.76 119.32,-267.06"/>
+<polygon fill="#57606a" stroke="#57606a" points="121.78,-267.02 118.58,-260.33 116.91,-267.56 121.78,-267.02"/>
+<text xml:space="preserve" text-anchor="middle" x="92.68" y="-293.99" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">관리 전용 토큰</text>
+</g>
+<!-- redis -->
+<g id="node9" class="node">
+<title>redis</title>
+<path fill="#fff8c5" stroke="#9a6700" stroke-width="1.4" d="M275.12,-47.5C275.12,-50.12 253.72,-52.25 227.38,-52.25 201.03,-52.25 179.62,-50.12 179.62,-47.5 179.62,-47.5 179.62,-4.75 179.62,-4.75 179.62,-2.13 201.03,0 227.38,0 253.72,0 275.12,-2.13 275.12,-4.75 275.12,-4.75 275.12,-47.5 275.12,-47.5"/>
+<path fill="none" stroke="#9a6700" stroke-width="1.4" d="M275.12,-47.5C275.12,-44.88 253.72,-42.75 227.38,-42.75 201.03,-42.75 179.62,-44.88 179.62,-47.5"/>
+<text xml:space="preserve" text-anchor="middle" x="227.38" y="-29.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">Redis</text>
+<text xml:space="preserve" text-anchor="middle" x="227.38" y="-14.72" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">공급자 응답 캐시</text>
+</g>
+<!-- public&#45;&gt;redis -->
+<g id="edge16" class="edge">
+<title>public&#45;&gt;redis</title>
+<path fill="none" stroke="#57606a" d="M437.28,-224.32C385.95,-212.99 327.35,-192.45 285.38,-155.25 257.52,-130.56 242.27,-89.84 234.49,-60.94"/>
+<polygon fill="#57606a" stroke="#57606a" points="236.88,-60.39 232.78,-54.22 232.13,-61.6 236.88,-60.39"/>
+</g>
+<!-- pg -->
+<g id="node10" class="node">
+<title>pg</title>
+<path fill="#fff8c5" stroke="#9a6700" stroke-width="1.4" d="M136.75,-47.5C136.75,-50.12 106.1,-52.25 68.38,-52.25 30.65,-52.25 0,-50.12 0,-47.5 0,-47.5 0,-4.75 0,-4.75 0,-2.13 30.65,0 68.38,0 106.1,0 136.75,-2.13 136.75,-4.75 136.75,-4.75 136.75,-47.5 136.75,-47.5"/>
+<path fill="none" stroke="#9a6700" stroke-width="1.4" d="M136.75,-47.5C136.75,-44.88 106.1,-42.75 68.38,-42.75 30.65,-42.75 0,-44.88 0,-47.5"/>
+<text xml:space="preserve" text-anchor="middle" x="68.38" y="-29.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">PostgreSQL + PostGIS</text>
+<text xml:space="preserve" text-anchor="middle" x="68.38" y="-14.72" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">hub_data 적재본</text>
+</g>
+<!-- public&#45;&gt;pg -->
+<g id="edge18" class="edge">
+<title>public&#45;&gt;pg</title>
+<path fill="none" stroke="#57606a" d="M442.9,-219.62C382.18,-206.54 305.78,-185.83 242.38,-155.25 189.25,-129.63 135.75,-87.16 102.38,-58.19"/>
+<polygon fill="#57606a" stroke="#57606a" points="104.4,-56.71 97.52,-53.94 101.18,-60.4 104.4,-56.71"/>
+</g>
+<!-- vendors -->
+<g id="node11" class="node">
+<title>vendors</title>
+<path fill="#f6f8fa" stroke="#57606a" stroke-width="1.4" stroke-dasharray="5,2" d="M737.75,-45.12C737.75,-45.12 601,-45.12 601,-45.12 595,-45.12 589,-39.12 589,-33.12 589,-33.12 589,-19.12 589,-19.12 589,-13.13 595,-7.12 601,-7.12 601,-7.12 737.75,-7.12 737.75,-7.12 743.75,-7.12 749.75,-13.12 749.75,-19.12 749.75,-19.12 749.75,-33.12 749.75,-33.12 749.75,-39.12 743.75,-45.12 737.75,-45.12"/>
+<text xml:space="preserve" text-anchor="middle" x="669.38" y="-29.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">민간 API (키가 있을 때만)</text>
+<text xml:space="preserve" text-anchor="middle" x="669.38" y="-14.72" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">카카오·네이버·Google·ODsay</text>
+</g>
+<!-- public&#45;&gt;vendors -->
+<g id="edge15" class="edge">
+<title>public&#45;&gt;vendors</title>
+<path fill="none" stroke="#57606a" d="M603.59,-219.7C632.83,-206.6 666.33,-185.85 683.38,-155.25 701.04,-123.54 690.69,-80.57 680.74,-53.34"/>
+<polygon fill="#57606a" stroke="#57606a" points="683.04,-52.5 678.25,-46.84 678.47,-54.25 683.04,-52.5"/>
+</g>
+<!-- osrm -->
+<g id="node12" class="node">
+<title>osrm</title>
+<path fill="#f6f8fa" stroke="#57606a" stroke-width="1.4" stroke-dasharray="5,2" d="M894.12,-45.12C894.12,-45.12 804.62,-45.12 804.62,-45.12 798.62,-45.12 792.62,-39.12 792.62,-33.12 792.62,-33.12 792.62,-19.12 792.62,-19.12 792.62,-13.13 798.62,-7.12 804.62,-7.12 804.62,-7.12 894.12,-7.12 894.12,-7.12 900.12,-7.12 906.12,-13.12 906.12,-19.12 906.12,-19.12 906.12,-33.12 906.12,-33.12 906.12,-39.12 900.12,-45.12 894.12,-45.12"/>
+<text xml:space="preserve" text-anchor="middle" x="849.38" y="-29.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">OSRM</text>
+<text xml:space="preserve" text-anchor="middle" x="849.38" y="-14.72" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">(직접 띄운 인스턴스)</text>
+</g>
+<!-- public&#45;&gt;osrm -->
+<g id="edge17" class="edge">
+<title>public&#45;&gt;osrm</title>
+<path fill="none" stroke="#57606a" d="M598.17,-219.66C633.72,-204.93 682.15,-182.36 720.38,-155.25 763.28,-124.82 804.99,-79.72 828.88,-51.94"/>
+<polygon fill="#57606a" stroke="#57606a" points="830.61,-53.68 833.29,-46.76 826.88,-50.5 830.61,-53.68"/>
+</g>
+<!-- rules&#45;&gt;public -->
+<!-- rules&#45;&gt;pg -->
+<g id="edge20" class="edge">
+<title>rules&#45;&gt;pg</title>
+<path fill="none" stroke="#57606a" d="M238.95,-219.71C200.14,-207.05 154.83,-186.73 123.38,-155.25 97.44,-129.3 82.94,-89.18 75.42,-60.75"/>
+<polygon fill="#57606a" stroke="#57606a" points="77.85,-60.36 73.76,-54.17 73.1,-61.56 77.85,-60.36"/>
+</g>
+<!-- internal&#45;&gt;rules -->
+<!-- sched -->
+<g id="node8" class="node">
+<title>sched</title>
+<path fill="#ddf4ff" stroke="#0969da" stroke-width="1.4" d="M465.62,-155.25C465.62,-155.25 319.12,-155.25 319.12,-155.25 313.12,-155.25 307.12,-149.25 307.12,-143.25 307.12,-143.25 307.12,-129.25 307.12,-129.25 307.12,-123.25 313.12,-117.25 319.12,-117.25 319.12,-117.25 465.62,-117.25 465.62,-117.25 471.62,-117.25 477.62,-123.25 477.62,-129.25 477.62,-129.25 477.62,-143.25 477.62,-143.25 477.62,-149.25 471.62,-155.25 465.62,-155.25"/>
+<text xml:space="preserve" text-anchor="middle" x="392.38" y="-139.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">스케줄러</text>
+<text xml:space="preserve" text-anchor="middle" x="392.38" y="-124.85" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">예보·실황·대기 폴링, 코스 동기화</text>
+</g>
+<!-- internal&#45;&gt;sched -->
+<g id="edge21" class="edge">
+<title>internal&#45;&gt;sched</title>
+<path fill="none" stroke="#57606a" d="M167.32,-219.61C214.48,-202.35 284.58,-176.7 333.98,-158.62"/>
+<polygon fill="#57606a" stroke="#57606a" points="334.57,-161.01 340.31,-156.3 332.89,-156.41 334.57,-161.01"/>
+<text xml:space="preserve" text-anchor="middle" x="235.54" y="-190.89" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">즉시 실행</text>
+</g>
+<!-- internal&#45;&gt;pg -->
+<g id="edge22" class="edge">
+<title>internal&#45;&gt;pg</title>
+<path fill="none" stroke="#57606a" d="M90.03,-219.84C71.12,-204.9 47.16,-181.98 36.38,-155.25 23.8,-124.09 36.11,-86.63 48.93,-60.28"/>
+<polygon fill="#57606a" stroke="#57606a" points="51.05,-61.52 52.03,-54.17 46.68,-59.3 51.05,-61.52"/>
+</g>
+<!-- lane&#45;&gt;vendors -->
+<g id="edge19" class="edge">
+<title>lane&#45;&gt;vendors</title>
+<path fill="none" stroke="#57606a" stroke-dasharray="5,2" d="M603.91,-117.88C616.7,-100.15 636.68,-72.45 651.2,-52.32"/>
+<polygon fill="#57606a" stroke="#57606a" points="653.1,-53.88 655.21,-46.77 649.12,-51.01 653.1,-53.88"/>
+</g>
+<!-- sched&#45;&gt;lane -->
+<!-- sched&#45;&gt;pg -->
+<g id="edge23" class="edge">
+<title>sched&#45;&gt;pg</title>
+<path fill="none" stroke="#57606a" d="M336.68,-116.66C283.86,-99.04 204.07,-72.41 145.22,-52.77"/>
+<polygon fill="#57606a" stroke="#57606a" points="146.27,-50.54 138.86,-50.65 144.72,-55.19 146.27,-50.54"/>
+<text xml:space="preserve" text-anchor="middle" x="228.24" y="-86.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">적재</text>
+</g>
+<!-- public_api -->
+<g id="node13" class="node">
+<title>public_api</title>
+<path fill="#f6f8fa" stroke="#57606a" stroke-width="1.4" stroke-dasharray="5,2" d="M534.12,-45.12C534.12,-45.12 330.62,-45.12 330.62,-45.12 324.62,-45.12 318.62,-39.12 318.62,-33.12 318.62,-33.12 318.62,-19.12 318.62,-19.12 318.62,-13.13 324.62,-7.12 330.62,-7.12 330.62,-7.12 534.12,-7.12 534.12,-7.12 540.12,-7.12 546.12,-13.12 546.12,-19.12 546.12,-19.12 546.12,-33.12 546.12,-33.12 546.12,-39.12 540.12,-45.12 534.12,-45.12"/>
+<text xml:space="preserve" text-anchor="middle" x="432.38" y="-29.73" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">공공 API (키가 있을 때만)</text>
+<text xml:space="preserve" text-anchor="middle" x="432.38" y="-14.72" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="12.00" fill="#1f2328">기상청·에어코리아·두루누비·국토교통부·서울</text>
+</g>
+<!-- sched&#45;&gt;public_api -->
+<g id="edge24" class="edge">
+<title>sched&#45;&gt;public_api</title>
+<path fill="none" stroke="#57606a" d="M399.16,-116.91C405.6,-99.51 415.34,-73.18 422.61,-53.53"/>
+<polygon fill="#57606a" stroke="#57606a" points="424.9,-54.39 425.03,-46.98 420.3,-52.69 424.9,-54.39"/>
+<text xml:space="preserve" text-anchor="middle" x="403.33" y="-84.57" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#1f2328">수집</text>
+</g>
+<!-- redis&#45;&gt;public_api -->
+<!-- pg&#45;&gt;redis -->
+<!-- vendors&#45;&gt;osrm -->
+<!-- public_api&#45;&gt;vendors -->
+</g>
+</svg>

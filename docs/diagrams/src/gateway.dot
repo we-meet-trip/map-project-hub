@@ -1,0 +1,50 @@
+digraph gateway {
+  graph [rankdir=TB, bgcolor="@BG@", fontname="Pretendard, Noto Sans KR, sans-serif", fontcolor="@FG@", nodesep=0.6, ranksep=0.9, pad=0.3, newrank=true, splines=spline, label="hub 게이트웨이 구성", labelloc=t, fontsize=18];
+  node  [fontname="Pretendard, Noto Sans KR, sans-serif", fontsize=12, fontcolor="@FG@", shape=box, style="rounded,filled", fillcolor="@SVC_FILL@", color="@SVC_EDGE@", penwidth=1.4];
+  edge  [fontname="Pretendard, Noto Sans KR, sans-serif", fontsize=10, fontcolor="@FG@", color="@LINE@", arrowsize=0.7];
+
+  user  [label="map-project-user (BFF)"];
+  agent [label="map-project-agent (추천)"];
+  admin [label="map-project-admin (운영 콘솔)"];
+
+  subgraph cluster_hub {
+    label="map-project-hub"; labeljust=l; fontsize=14; color="@SVC_EDGE@"; style="rounded"; fontcolor="@FG@";
+    public   [label="/v1/* 공개 경로\n날씨·장소·후기·사진·경로·대중교통·이동수단"];
+    rules    [label="/v1/rules/*\n반경·실내 가점·금지 구역·체류"];
+    internal [label="/internal/*\n즉시 수집·구독 격자·금지 구역"];
+    lane     [label="노선 좌표 조회 (기본 꺼짐)", fillcolor="@OPT_FILL@", color="@OPT_EDGE@", style="rounded,filled,dashed"];
+    sched    [label="스케줄러\n예보·실황·대기 폴링, 코스 동기화"];
+  }
+
+  redis      [label="Redis\n공급자 응답 캐시", shape=cylinder, fillcolor="@DB_FILL@", color="@DB_EDGE@"];
+  pg         [label="PostgreSQL + PostGIS\nhub_data 적재본", shape=cylinder, fillcolor="@DB_FILL@", color="@DB_EDGE@"];
+  vendors    [label="민간 API (키가 있을 때만)\n카카오·네이버·Google·ODsay", fillcolor="@EXT_FILL@", color="@EXT_EDGE@", style="rounded,filled,dashed"];
+  osrm       [label="OSRM\n(직접 띄운 인스턴스)", fillcolor="@EXT_FILL@", color="@EXT_EDGE@", style="rounded,filled,dashed"];
+  public_api [label="공공 API (키가 있을 때만)\n기상청·에어코리아·두루누비·국토교통부·서울", fillcolor="@EXT_FILL@", color="@EXT_EDGE@", style="rounded,filled,dashed"];
+
+  { rank=same; admin; agent; user; }
+  admin -> agent -> user [style=invis];
+  { rank=same; internal; rules; public; }
+  internal -> rules -> public [style=invis];
+  { rank=same; pg; redis; public_api; vendors; osrm; }
+  pg -> redis -> public_api -> vendors -> osrm [style=invis];
+  { rank=same; sched; lane; }
+  sched -> lane [style=invis];
+
+  user  -> public   [xlabel="loc 봉투"];
+  user  -> lane     [style=dashed];
+  agent -> public   [xlabel="날씨·장소·후기"];
+  agent -> rules    [xlabel="loc 봉투"];
+  admin -> internal [xlabel="관리 전용 토큰"];
+
+  public   -> vendors;
+  public   -> redis;
+  public   -> osrm;
+  public   -> pg;
+  lane     -> vendors [style=dashed];
+  rules    -> pg;
+  internal -> sched  [xlabel="즉시 실행"];
+  internal -> pg;
+  sched    -> pg     [xlabel="적재"];
+  sched    -> public_api [xlabel="수집"];
+}

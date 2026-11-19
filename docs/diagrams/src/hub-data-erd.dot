@@ -1,0 +1,23 @@
+digraph hub_data {
+  graph [rankdir=LR, bgcolor="@BG@", fontname="Pretendard, Noto Sans KR, sans-serif", fontcolor="@FG@", nodesep=0.5, ranksep=1.6, pad=0.3, label="hub_data 스키마", labelloc=t, fontsize=18];
+  node  [fontname="Pretendard, Noto Sans KR, sans-serif", fontsize=11, fontcolor="@FG@", shape=plain];
+  edge  [color="@LINE@", fontcolor="@FG@", fontname="Pretendard, Noto Sans KR, sans-serif", fontsize=10, arrowsize=0.7];
+
+  region_grid [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>region_grid</b></td></tr><tr><td align="left">PK admin_code</td></tr><tr><td align="left">lv1 · lv2 · lv3</td></tr><tr><td align="left">nx · ny · lon · lat</td></tr></table>>];
+  subscribed_grids [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>subscribed_grids</b></td></tr><tr><td align="left">PK grid_id · label(UNIQUE)</td></tr><tr><td align="left">FK admin_code</td></tr><tr><td align="left">nx · ny · lat · lng</td></tr><tr><td align="left">mid_land_reg_id · mid_temp_reg_id</td></tr><tr><td align="left">is_active</td></tr></table>>];
+  short_term [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>short_term_forecast</b></td></tr><tr><td align="left">PK nx · ny · fcst_at · category</td></tr><tr><td align="left">base_at · fcst_value · expires_at</td></tr></table>>];
+  mid_land [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>mid_land_forecast</b></td></tr><tr><td align="left">PK reg_id · tm_fc · fcst_day_offset · am_pm</td></tr><tr><td align="left">weather · rain_prob_pct · expires_at</td></tr></table>>];
+  mid_temp [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>mid_temp_forecast</b></td></tr><tr><td align="left">PK reg_id · tm_fc · fcst_day_offset</td></tr><tr><td align="left">ta_min · ta_max(범위 포함) · expires_at</td></tr></table>>];
+  nowcast [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>weather_nowcast_snapshots</b></td></tr><tr><td align="left">PK date_kst · hour_kst · nx · ny</td></tr><tr><td align="left">temp_c · pty · captured_at</td></tr></table>>];
+  air [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>air_quality_snapshots</b></td></tr><tr><td align="left">PK sido · station_name · data_time</td></tr><tr><td align="left">pm10 · pm25 · captured_at</td></tr></table>>];
+  places [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>places</b></td></tr><tr><td align="left">PK content_id</td></tr><tr><td align="left">source(kakao·durunubi)</td></tr><tr><td align="left">name · address · lat · lng</td></tr><tr><td align="left">geom Point(4326) · 코스 정보 · 경계 상자</td></tr></table>>];
+  zones [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="@DB_EDGE@" bgcolor="@DB_FILL@"><tr><td><b>forbidden_zones</b></td></tr><tr><td align="left">PK zone_id</td></tr><tr><td align="left">name · reason</td></tr><tr><td align="left">zone Polygon(4326)</td></tr></table>>];
+
+  subscribed_grids -> region_grid [xlabel="FK admin_code"];
+  short_term -> subscribed_grids [style=dashed, xlabel="nx·ny"];
+  mid_land -> subscribed_grids [style=dashed, xlabel="reg_id"];
+  mid_temp -> subscribed_grids [style=dashed, xlabel="reg_id"];
+  nowcast -> subscribed_grids [style=dashed, xlabel="nx·ny(시도 대표 격자)"];
+  note [shape=plain, label="실선: 외래키 / 점선: 같은 값으로 맞춰 읽는 관계(외래키 없음)"];
+  { rank=same; places; zones; air; note; }
+}

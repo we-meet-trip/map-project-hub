@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Title: hub_data Pages: 1 -->
+<svg width="811pt" height="871pt"
+ viewBox="0.00 0.00 811.00 871.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(21.6 849.35)">
+<title>hub_data</title>
+<polygon fill="#0d1117" stroke="none" points="-21.6,21.6 -21.6,-849.35 789.1,-849.35 789.1,21.6 -21.6,21.6"/>
+<text xml:space="preserve" text-anchor="middle" x="383.75" y="-806.65" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="18.00" fill="#e6edf3">hub_data 스키마</text>
+<!-- region_grid -->
+<g id="node1" class="node">
+<title>region_grid</title>
+<polygon fill="#3b2e00" stroke="none" points="680.25,-143.25 680.25,-231.25 767.5,-231.25 767.5,-143.25 680.25,-143.25"/>
+<text xml:space="preserve" text-anchor="start" x="694.25" y="-216.8" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">region_grid</text>
+<text xml:space="preserve" text-anchor="start" x="685.25" y="-194.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK admin_code</text>
+<text xml:space="preserve" text-anchor="start" x="685.25" y="-172.75" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">lv1 · lv2 · lv3</text>
+<text xml:space="preserve" text-anchor="start" x="685.25" y="-151.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">nx · ny · lon · lat</text>
+<polygon fill="none" stroke="#d29922" points="680.25,-143.25 680.25,-231.25 767.5,-231.25 767.5,-143.25 680.25,-143.25"/>
+</g>
+<!-- subscribed_grids -->
+<g id="node2" class="node">
+<title>subscribed_grids</title>
+<polygon fill="#3b2e00" stroke="none" points="383.5,-121.75 383.5,-252.75 565.25,-252.75 565.25,-121.75 383.5,-121.75"/>
+<text xml:space="preserve" text-anchor="start" x="429" y="-238.3" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">subscribed_grids</text>
+<text xml:space="preserve" text-anchor="start" x="388.5" y="-215.75" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK grid_id · label(UNIQUE)</text>
+<text xml:space="preserve" text-anchor="start" x="388.5" y="-194.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">FK admin_code</text>
+<text xml:space="preserve" text-anchor="start" x="388.5" y="-172.75" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">nx · ny · lat · lng</text>
+<text xml:space="preserve" text-anchor="start" x="388.5" y="-151.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">mid_land_reg_id · mid_temp_reg_id</text>
+<text xml:space="preserve" text-anchor="start" x="388.5" y="-129.75" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">is_active</text>
+<polygon fill="none" stroke="#d29922" points="383.5,-121.75 383.5,-252.75 565.25,-252.75 565.25,-121.75 383.5,-121.75"/>
+</g>
+<!-- subscribed_grids&#45;&gt;region_grid -->
+<g id="edge1" class="edge">
+<title>subscribed_grids&#45;&gt;region_grid</title>
+<path fill="none" stroke="#8b949e" d="M565.08,-187.25C601.12,-187.25 641.33,-187.25 672.15,-187.25"/>
+<polygon fill="#8b949e" stroke="#8b949e" points="672.06,-189.7 679.06,-187.25 672.06,-184.8 672.06,-189.7"/>
+<text xml:space="preserve" text-anchor="middle" x="656.48" y="-184.12" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#e6edf3">FK admin_code</text>
+</g>
+<!-- short_term -->
+<g id="node3" class="node">
+<title>short_term</title>
+<polygon fill="#3b2e00" stroke="none" points="52,-309 52,-375.5 216.5,-375.5 216.5,-309 52,-309"/>
+<text xml:space="preserve" text-anchor="start" x="82.12" y="-361.05" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">short_term_forecast</text>
+<text xml:space="preserve" text-anchor="start" x="57" y="-338.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK nx · ny · fcst_at · category</text>
+<text xml:space="preserve" text-anchor="start" x="57" y="-317" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">base_at · fcst_value · expires_at</text>
+<polygon fill="none" stroke="#d29922" points="52,-309 52,-375.5 216.5,-375.5 216.5,-309 52,-309"/>
+</g>
+<!-- short_term&#45;&gt;subscribed_grids -->
+<g id="edge2" class="edge">
+<title>short_term&#45;&gt;subscribed_grids</title>
+<path fill="none" stroke="#8b949e" stroke-dasharray="5,2" d="M216.43,-311.97C233.74,-305.12 251.83,-297.68 268.5,-290.25 304.09,-274.4 342.4,-255.62 376.16,-238.47"/>
+<polygon fill="#8b949e" stroke="#8b949e" points="377.26,-240.65 382.39,-235.29 375.04,-236.29 377.26,-240.65"/>
+<text xml:space="preserve" text-anchor="middle" x="289.53" y="-265.78" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#e6edf3">nx·ny</text>
+</g>
+<!-- mid_land -->
+<g id="node4" class="node">
+<title>mid_land</title>
+<polygon fill="#3b2e00" stroke="none" points="23.88,-206 23.88,-272.5 244.62,-272.5 244.62,-206 23.88,-206"/>
+<text xml:space="preserve" text-anchor="start" x="87" y="-258.05" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">mid_land_forecast</text>
+<text xml:space="preserve" text-anchor="start" x="28.88" y="-235.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK reg_id · tm_fc · fcst_day_offset · am_pm</text>
+<text xml:space="preserve" text-anchor="start" x="28.88" y="-214" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">weather · rain_prob_pct · expires_at</text>
+<polygon fill="none" stroke="#d29922" points="23.88,-206 23.88,-272.5 244.62,-272.5 244.62,-206 23.88,-206"/>
+</g>
+<!-- mid_land&#45;&gt;subscribed_grids -->
+<g id="edge3" class="edge">
+<title>mid_land&#45;&gt;subscribed_grids</title>
+<path fill="none" stroke="#8b949e" stroke-dasharray="5,2" d="M244.56,-222.44C286.62,-215.97 334.34,-208.63 375.28,-202.34"/>
+<polygon fill="#8b949e" stroke="#8b949e" points="375.6,-204.77 382.14,-201.28 374.85,-199.92 375.6,-204.77"/>
+<text xml:space="preserve" text-anchor="middle" x="300.5" y="-202.26" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#e6edf3">reg_id</text>
+</g>
+<!-- mid_temp -->
+<g id="node5" class="node">
+<title>mid_temp</title>
+<polygon fill="#3b2e00" stroke="none" points="36.62,-103 36.62,-169.5 231.88,-169.5 231.88,-103 36.62,-103"/>
+<text xml:space="preserve" text-anchor="start" x="85.12" y="-155.05" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">mid_temp_forecast</text>
+<text xml:space="preserve" text-anchor="start" x="41.62" y="-132.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK reg_id · tm_fc · fcst_day_offset</text>
+<text xml:space="preserve" text-anchor="start" x="41.62" y="-111" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">ta_min · ta_max(범위 포함) · expires_at</text>
+<polygon fill="none" stroke="#d29922" points="36.62,-103 36.62,-169.5 231.88,-169.5 231.88,-103 36.62,-103"/>
+</g>
+<!-- mid_temp&#45;&gt;subscribed_grids -->
+<g id="edge4" class="edge">
+<title>mid_temp&#45;&gt;subscribed_grids</title>
+<path fill="none" stroke="#8b949e" stroke-dasharray="5,2" d="M231.69,-150.8C276.71,-157.59 330.22,-165.66 375.42,-172.48"/>
+<polygon fill="#8b949e" stroke="#8b949e" points="374.98,-174.89 382.27,-173.51 375.71,-170.04 374.98,-174.89"/>
+<text xml:space="preserve" text-anchor="middle" x="294.03" y="-152.74" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#e6edf3">reg_id</text>
+</g>
+<!-- nowcast -->
+<g id="node6" class="node">
+<title>nowcast</title>
+<polygon fill="#3b2e00" stroke="none" points="53.5,0 53.5,-66.5 215,-66.5 215,0 53.5,0"/>
+<text xml:space="preserve" text-anchor="start" x="58.5" y="-52.05" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">weather_nowcast_snapshots</text>
+<text xml:space="preserve" text-anchor="start" x="58.5" y="-29.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK date_kst · hour_kst · nx · ny</text>
+<text xml:space="preserve" text-anchor="start" x="58.5" y="-8" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">temp_c · pty · captured_at</text>
+<polygon fill="none" stroke="#d29922" points="53.5,0 53.5,-66.5 215,-66.5 215,0 53.5,0"/>
+</g>
+<!-- nowcast&#45;&gt;subscribed_grids -->
+<g id="edge5" class="edge">
+<title>nowcast&#45;&gt;subscribed_grids</title>
+<path fill="none" stroke="#8b949e" stroke-dasharray="5,2" d="M214.65,-62.88C232.49,-69.92 251.24,-77.61 268.5,-85.25 304.05,-101 342.35,-119.61 376.11,-136.59"/>
+<polygon fill="#8b949e" stroke="#8b949e" points="374.99,-138.77 382.34,-139.73 377.19,-134.39 374.99,-138.77"/>
+<text xml:space="preserve" text-anchor="middle" x="255.64" y="-90.21" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="10.00" fill="#e6edf3">nx·ny(시도 대표 격자)</text>
+</g>
+<!-- air -->
+<g id="node7" class="node">
+<title>air</title>
+<polygon fill="#3b2e00" stroke="none" points="45.25,-412 45.25,-478.5 223.25,-478.5 223.25,-412 45.25,-412"/>
+<text xml:space="preserve" text-anchor="start" x="77.62" y="-464.05" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">air_quality_snapshots</text>
+<text xml:space="preserve" text-anchor="start" x="50.25" y="-441.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK sido · station_name · data_time</text>
+<text xml:space="preserve" text-anchor="start" x="50.25" y="-420" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">pm10 · pm25 · captured_at</text>
+<polygon fill="none" stroke="#d29922" points="45.25,-412 45.25,-478.5 223.25,-478.5 223.25,-412 45.25,-412"/>
+</g>
+<!-- places -->
+<g id="node8" class="node">
+<title>places</title>
+<polygon fill="#3b2e00" stroke="none" points="33.62,-514.5 33.62,-624 234.88,-624 234.88,-514.5 33.62,-514.5"/>
+<text xml:space="preserve" text-anchor="start" x="117.38" y="-609.55" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">places</text>
+<text xml:space="preserve" text-anchor="start" x="38.62" y="-587" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK content_id</text>
+<text xml:space="preserve" text-anchor="start" x="38.62" y="-565.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">source(kakao·durunubi)</text>
+<text xml:space="preserve" text-anchor="start" x="38.62" y="-544" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">name · address · lat · lng</text>
+<text xml:space="preserve" text-anchor="start" x="38.62" y="-522.5" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">geom Point(4326) · 코스 정보 · 경계 상자</text>
+<polygon fill="none" stroke="#d29922" points="33.62,-514.5 33.62,-624 234.88,-624 234.88,-514.5 33.62,-514.5"/>
+</g>
+<!-- zones -->
+<g id="node9" class="node">
+<title>zones</title>
+<polygon fill="#3b2e00" stroke="none" points="79.75,-660.25 79.75,-748.25 188.75,-748.25 188.75,-660.25 79.75,-660.25"/>
+<text xml:space="preserve" text-anchor="start" x="90.38" y="-733.8" font-family="Pretendard, Noto Sans KR, sans-serif" font-weight="bold" font-size="11.00" fill="#e6edf3">forbidden_zones</text>
+<text xml:space="preserve" text-anchor="start" x="84.75" y="-711.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">PK zone_id</text>
+<text xml:space="preserve" text-anchor="start" x="84.75" y="-689.75" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">name · reason</text>
+<text xml:space="preserve" text-anchor="start" x="84.75" y="-668.25" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">zone Polygon(4326)</text>
+<polygon fill="none" stroke="#d29922" points="79.75,-660.25 79.75,-748.25 188.75,-748.25 188.75,-660.25 79.75,-660.25"/>
+</g>
+<!-- note -->
+<g id="node10" class="node">
+<title>note</title>
+<text xml:space="preserve" text-anchor="middle" x="134.25" y="-787.55" font-family="Pretendard, Noto Sans KR, sans-serif" font-size="11.00" fill="#e6edf3">실선: 외래키 / 점선: 같은 값으로 맞춰 읽는 관계(외래키 없음)</text>
+</g>
+</g>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "title": "기상청 예보 수집과 조회",
+  "lanes": [
+    {"id": "sched", "label": "스케줄러", "sub": "APScheduler"},
+    {"id": "hub", "label": "hub 수집 잡", "sub": "hub_scheduler"},
+    {"id": "kma", "label": "기상청 API", "sub": "공공데이터포털"},
+    {"id": "db", "label": "PostGIS", "sub": "hub_data"},
+    {"id": "caller", "label": "호출 서비스", "sub": "user·agent"}
+  ],
+  "steps": [
+    {"kind": "band", "text": "수집 (단기 02·05·…·23시 10분, 중기 06·18시 10분)"},
+    {"kind": "call", "from": "sched", "to": "hub", "text": "short_term_polling_loop()"},
+    {"kind": "self", "from": "hub", "text": "스텁 모드면 건너뜀, 키가 비면 한 번 알리고 건너뜀"},
+    {"kind": "call", "from": "hub", "to": "db", "text": "활성 구독 격자·이미 적재한 격자 조회"},
+    {"kind": "ret", "from": "db", "to": "hub", "text": "남은 격자 목록"},
+    {"kind": "call", "from": "hub", "to": "kma", "text": "격자마다 단기예보 요청(페이지 단위)"},
+    {"kind": "ret", "from": "kma", "to": "hub", "text": "items + totalCount"},
+    {"kind": "self", "from": "hub", "text": "페이지마다 totalCount 일치·행 누락/중복 검사 — 어긋나면 그 발표분을 버림"},
+    {"kind": "call", "from": "hub", "to": "db", "text": "upsert_short_term_items"},
+    {"kind": "self", "from": "hub", "text": "실패한 격자는 마감 전까지 다음 라운드에서 다시"},
+    {"kind": "band", "text": "감시 (매시 25분: 단기 남은 격자, 매시 20분: 중기 발표분 확인)"},
+    {"kind": "call", "from": "sched", "to": "hub", "text": "빠진 격자·발표분만 다시 수집"},
+    {"kind": "band", "text": "조회 (요청 시점에는 발급처를 부르지 않는다)"},
+    {"kind": "call", "from": "caller", "to": "db", "text": "GET /v1/weather → 같은 광역의 가장 가까운 활성 격자로 적재본 읽기"},
+    {"kind": "ret", "from": "db", "to": "caller", "text": "일별 예보 + 빈 날 표시"}
+  ]
+}
