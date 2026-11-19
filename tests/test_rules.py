@@ -186,6 +186,16 @@ def test_endpoint_mobility_radius_unknown_422():
     assert resp.status_code == 422
 
 
+def test_endpoint_mobility_radius_rejects_more_than_100_candidates():
+    """봉투 안 후보가 100개를 넘으면 400 이다(상한은 보내는 쪽이 지킨다)."""
+    candidates = [{"content_id": str(i), "lat": 37.5, "lng": 127.0} for i in range(101)]
+    body = {"origin": {"lat": 37.5, "lng": 127.0}, "mobility": "foot", "candidates": candidates}
+    resp = _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body))
+    assert resp.status_code == 400
+    body["candidates"] = candidates[:100]
+    assert _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body)).status_code == 200
+
+
 def test_endpoint_mobility_radius_car_passthrough():
     """car 는 무제한이라 먼 후보도 남고 radius_m 은 None."""
     body = {

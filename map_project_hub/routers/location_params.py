@@ -20,6 +20,8 @@ from map_project_hub.crypto.location_seal import SealError, open_seal
 logger = logging.getLogger(__name__)
 
 KOREA_LAT = (33.0, 43.0)
+# 이동수단 반경 필터 한 번에 받는 후보 수 상한.
+MAX_RADIUS_CANDIDATES = 100
 KOREA_LNG = (124.0, 132.0)
 
 
@@ -155,6 +157,10 @@ def resolve_origin_and_candidates(
     opened_candidates = payload.get("candidates")
     if not isinstance(opened_origin, dict) or not isinstance(opened_candidates, list):
         raise _reject("sealed origin malformed")
+    # 후보 수 상한은 봉투 밖에서 검증하던 때와 같다. 보내는 쪽이 지키되,
+    # 넘으면 판정 비용이 끝없이 늘지 않게 여기서 거절한다.
+    if len(opened_candidates) > MAX_RADIUS_CANDIDATES:
+        raise _reject("too many candidates")
     logger.info(
         "location seal opened path=%s caller=%s candidates=%d",
         request.url.path,
