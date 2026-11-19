@@ -26,6 +26,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
     env:
       HUB_DATABASE_URL: postgresql+psycopg://ci:ci@127.0.0.1/ci
     steps:
@@ -35,7 +39,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
           cache: pip
       - name: install
         run: |
@@ -47,7 +51,7 @@ jobs:
       - name: test
         run: python -m pytest -q
       - name: build runtime image
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_image }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_image && matrix.python-version == '3.12' }}
         run: docker build --tag map-project-hub:ci .
 
   database-isolation:
