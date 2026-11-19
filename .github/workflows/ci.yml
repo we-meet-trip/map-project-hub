@@ -48,7 +48,7 @@ jobs:
         run: python -m pytest -q
       - name: build runtime image
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.build_image }}
-        run: docker build --tag map-runtime:ci .
+        run: docker build --tag map-project-hub:ci .
 
   database-isolation:
     needs: [test]
