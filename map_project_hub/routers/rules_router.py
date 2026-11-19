@@ -72,9 +72,7 @@ async def filter_mobility_radius(
         )
     # 출발지와 후보는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    opened_origin, candidates = resolve_origin_and_candidates(
-        request, body.loc, body.origin, body.candidates
-    )
+    opened_origin, candidates = resolve_origin_and_candidates(request, body.loc)
     origin = (opened_origin["lat"], opened_origin["lng"])
     filtered, radius_m = filter_by_radius(
         origin, body.mobility, candidates

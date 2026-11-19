@@ -66,18 +66,17 @@ def test_nearby_revalidates_decrypted_coordinates(monkeypatch, point):
     fetch.assert_not_awaited()
 
 
-def test_nearby_requires_sealed_point_when_key_is_set(monkeypatch):
-    monkeypatch.setattr(settings, "LOCATION_WIRE_KEY", SecretStr(KEY_B64))
+def test_nearby_rejects_plain_coordinates():
+    """평문 좌표로는 받지 않는다 — 봉투가 없으면 400 이다."""
     response = _client().get("/v1/places/nearby", params={"lat": 37.5, "lng": 127, "category": "cafe"})
     assert response.status_code == 400
 
 
 def test_nearby_unavailable_is_not_an_empty_success(monkeypatch):
-    monkeypatch.setattr(settings, "LOCATION_WIRE_KEY", SecretStr(""))
     monkeypatch.setattr(settings, "PLACES_STUB_MODE", False)
     monkeypatch.setattr(hub_routers, "get_place_cache", lambda: None)
     monkeypatch.setattr(hub_routers, "get_kakao_client", lambda: None)
-    response = _client().get("/v1/places/nearby", params={"lat": 37.5, "lng": 127, "category": "cafe"})
+    response = _client().get("/v1/places/nearby", params={"loc": seal({"lat": 37.5, "lng": 127}), "category": "cafe"})
     assert response.status_code == 503
 
 

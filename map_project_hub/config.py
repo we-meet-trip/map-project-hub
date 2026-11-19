@@ -67,9 +67,9 @@ class Settings(BaseSettings):
     INTERNAL_SERVICE_TOKEN: SecretStr = SecretStr("")
     HUB_ADMIN_INTERNAL_TOKEN: SecretStr = SecretStr("")
 
-    # 서비스 사이를 오가는 좌표를 감싸는 데 쓰는 열쇠. BFF·agent 와 같은 값을
-    # 나눠 가진다. 이 값이 없으면 좌표가 담긴 요청을 받아도 열지 못해 거절한다 —
-    # 열지 못하는 것을 평문으로 받아 주는 쪽으로 물러서면 감싼 의미가 없다.
+    # 서비스 사이를 오가는 좌표를 감싸는 데 쓰는 열쇠(필수). BFF·agent 와 같은
+    # 값을 나눠 가진다. 비어 있거나 형식이 틀리면 부팅을 멈춘다 — 좌표는 봉투로만
+    # 받고 평문으로 받는 길은 없다.
     # 32바이트로 풀리는 base64 여야 한다: openssl rand -base64 32
     LOCATION_WIRE_KEY: SecretStr = SecretStr("")
 

@@ -22,6 +22,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from tests.wire import sealed
 from map_project_hub.clients.hub_clients import OsrmApiError, OsrmClient
 from map_project_hub.routers.hub_routers import _route_cache_key
 from map_project_hub.routers.hub_routers import router as hub_router
@@ -52,7 +53,7 @@ def _leg(
 
 def test_directions_stub_shape(stub_mode):
     """base URL 미설정 → 스텁 경로로 200 과 기대 형태를 반환한다."""
-    body = {"mode": "walk", "legs": [_leg(), _leg(37.60, 127.00, 37.61, 127.01)]}
+    body = {"mode": "walk", "loc": sealed(legs=[_leg(), _leg(37.60, 127.00, 37.61, 127.01)])}
     resp = _client().post("/v1/directions/batch", json=body)
     assert resp.status_code == 200
     routes = resp.json()["routes"]
@@ -70,7 +71,7 @@ def test_directions_stub_shape(stub_mode):
 
 def test_directions_stub_deterministic(stub_mode):
     """같은 입력은 같은 스텁 결과를 낸다(결정적)."""
-    body = {"mode": "bicycle", "legs": [_leg()]}
+    body = {"mode": "bicycle", "loc": sealed(legs=[_leg()])}
     c = _client()
     a = c.post("/v1/directions/batch", json=body).json()
     b = c.post("/v1/directions/batch", json=body).json()
@@ -79,68 +80,65 @@ def test_directions_stub_deterministic(stub_mode):
 
 def test_directions_stub_identical_points_no_bend(stub_mode):
     """출발=도착이면 굴곡 없이 두 점만 반환한다(0길이 무해)."""
-    body = {"mode": "walk", "legs": [_leg(37.5, 127.0, 37.5, 127.0)]}
+    body = {"mode": "walk", "loc": sealed(legs=[_leg(37.5, 127.0, 37.5, 127.0)])}
     r0 = _client().post("/v1/directions/batch", json=body).json()["routes"][0]
     assert len(r0["path"]) == 2
     assert r0["distance_m"] == 0
 
 
-# ── 검증 실패(422) ──────────────────────────────────────────────────
+# ── 검증 실패 ───────────────────────────────────────────────────────
 
-def test_directions_empty_legs_422():
-    """legs 는 최소 1개이므로 빈 배열은 422 이다."""
+def test_directions_empty_legs_400():
+    """구간은 최소 1개이므로 빈 목록은 400 이다."""
     resp = _client().post(
-        "/v1/directions/batch", json={"mode": "walk", "legs": []}
+        "/v1/directions/batch", json={"mode": "walk", "loc": sealed(legs=[])}
     )
-    # 좌표를 감쌀 수 있게 되면서 lat/lng 는 선택 인자가 됐다. 그래서 빠졌을 때
-    # 걸리는 자리가 형식 검증기(422)에서 좌표 해석기(400)로 옮겨졌다.
-    # 둘 다 요청이 잘못됐다는 뜻이라 부르는 쪽 동작은 달라지지 않는다.
-    assert resp.status_code in (400, 422)
+    assert resp.status_code == 400
 
 
-def test_directions_too_many_legs_422():
-    """legs 는 최대 20개이므로 21개는 422 이다."""
+def test_directions_too_many_legs_400():
+    """구간은 최대 20개이므로 21개는 400 이다."""
     resp = _client().post(
         "/v1/directions/batch",
-        json={"mode": "walk", "legs": [_leg()] * 21},
+        json={"mode": "walk", "loc": sealed(legs=[_leg()] * 21)},
     )
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 def test_directions_bad_mode_422():
     """mode 는 walk/bicycle/scooter 외 값(bus)이면 422 이다."""
     resp = _client().post(
-        "/v1/directions/batch", json={"mode": "bus", "legs": [_leg()]}
+        "/v1/directions/batch", json={"mode": "bus", "loc": sealed(legs=[_leg()])}
     )
     assert resp.status_code == 422
 
 
-def test_directions_missing_goal_name_422():
-    """leg 의 goal_name 이 없으면 422 이다."""
+def test_directions_missing_goal_name_400():
+    """봉투 안 구간에 goal_name 이 없으면 400 이다."""
     leg = _leg()
     del leg["goal_name"]
     resp = _client().post(
-        "/v1/directions/batch", json={"mode": "walk", "legs": [leg]}
+        "/v1/directions/batch", json={"mode": "walk", "loc": sealed(legs=[leg])}
     )
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
-def test_directions_lat_out_of_korea_range_422():
-    """좌표가 한국 위도 범위(33~43) 밖이면 422 이다."""
+def test_directions_lat_out_of_korea_range_400():
+    """좌표가 한국 위도 범위(33~43) 밖이면 400 이다."""
     resp = _client().post(
         "/v1/directions/batch",
-        json={"mode": "walk", "legs": [_leg(slat=10.0)]},
+        json={"mode": "walk", "loc": sealed(legs=[_leg(slat=10.0)])},
     )
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
-def test_directions_lng_out_of_korea_range_422():
-    """좌표가 한국 경도 범위(124~132) 밖이면 422 이다."""
+def test_directions_lng_out_of_korea_range_400():
+    """좌표가 한국 경도 범위(124~132) 밖이면 400 이다."""
     resp = _client().post(
         "/v1/directions/batch",
-        json={"mode": "walk", "legs": [_leg(glng=200.0)]},
+        json={"mode": "walk", "loc": sealed(legs=[_leg(glng=200.0)])},
     )
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 # ── OsrmClient._normalize_route (MockTransport 순수 단위) ────────────

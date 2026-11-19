@@ -5,11 +5,12 @@ pytest 는 테스트 컬렉션 단계에서 본 모듈을 자동 임포트한다
 필수 환경변수의 기본값을 setdefault 로 주입한다(이미 정의되어 있으면 보존).
 
 호출 관계:
-  - 각 테스트가 `from app...` 임포트를 만나기 전에 본 파일이 먼저 평가되어
+  - 각 테스트가 `from map_project_hub...` 임포트를 만나기 전에 본 파일이 먼저 평가되어
     Settings(BaseSettings) 가 필수 필드 검증을 통과한다.
 """
 from __future__ import annotations
 
+import base64
 import os
 
 import pytest
@@ -22,6 +23,10 @@ os.environ.setdefault(
 )
 # KMA_SERVICE_KEY — Settings 의 필수 필드. KMAClient 인스턴스화를 위한 더미 값.
 os.environ.setdefault("KMA_SERVICE_KEY", "test-service-key")
+# LOCATION_WIRE_KEY — 좌표 봉투 열쇠(필수). 시험 전용 합성 값(tests/wire.py 와 같은 값).
+os.environ.setdefault(
+    "LOCATION_WIRE_KEY", base64.b64encode(b"map-wire-test-key-0000000000000!").decode()
+)
 # INTERNAL_SERVICE_TOKEN — internal_guard 테스트에서 헤더 일치 시나리오용.
 os.environ.setdefault("INTERNAL_SERVICE_TOKEN", "test-internal-token")
 

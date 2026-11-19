@@ -66,6 +66,21 @@ def _key() -> bytes:
     return key
 
 
+def require_key() -> None:
+    """부팅 때 봉투 열쇠를 확인한다. 없거나 형식이 틀리면 기동을 멈춘다.
+
+    좌표는 봉투로만 오가므로 열쇠 없이 뜨면 좌표가 담긴 요청을 하나도 처리하지
+    못한다. 요청마다 400 을 내며 조용히 망가지는 대신 부팅에서 바로 알린다.
+    """
+    try:
+        _key()
+    except SealError:
+        raise RuntimeError(
+            "LOCATION_WIRE_KEY is required: base64 of 32 random bytes shared with "
+            "user and agent (generate with: openssl rand -base64 32)"
+        ) from None
+
+
 def _b64url_decode(text: str) -> bytes:
     # 채움문자를 떼고 보내므로 길이를 4의 배수로 되돌린 뒤 푼다.
     return base64.urlsafe_b64decode(text + "=" * (-len(text) % 4))

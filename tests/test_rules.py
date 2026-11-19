@@ -19,6 +19,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import map_project_hub.routers.rules_router as rules_router_mod
+from tests.wire import sealed
 from map_project_hub.db.rules_repo import _linestring_wkt
 from map_project_hub.routers.rules_router import router as rules_router
 from map_project_hub.rules.rule_engine import (
@@ -150,6 +151,12 @@ def test_linestring_wkt_lng_lat_order():
 
 # ── 엔드포인트: mobility-radius ────────────────────────────────────
 
+def _sealed_body(body: dict) -> dict:
+    """출발지와 후보를 봉투 하나로 옮긴다 — 실제 호출자가 보내는 형태다."""
+    rest = {k: v for k, v in body.items() if k not in ("origin", "candidates")}
+    return {**rest, "loc": sealed(origin=body["origin"], candidates=body["candidates"])}
+
+
 def test_endpoint_mobility_radius_ok():
     """반경 안 후보만 남고 dropped 가 계산된다."""
     body = {
@@ -160,7 +167,7 @@ def test_endpoint_mobility_radius_ok():
             {"content_id": "out", "lat": 37.6, "lng": 127.2},
         ],
     }
-    resp = _client().post("/v1/rules/filter/mobility-radius", json=body)
+    resp = _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body))
     assert resp.status_code == 200
     data = resp.json()
     assert data["radius_m"] == 3000
@@ -175,7 +182,7 @@ def test_endpoint_mobility_radius_unknown_422():
         "mobility": "hoverboard",
         "candidates": [],
     }
-    resp = _client().post("/v1/rules/filter/mobility-radius", json=body)
+    resp = _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body))
     assert resp.status_code == 422
 
 
@@ -186,7 +193,7 @@ def test_endpoint_mobility_radius_car_passthrough():
         "mobility": "car",
         "candidates": [{"content_id": "far", "lat": 40.0, "lng": 130.0}],
     }
-    resp = _client().post("/v1/rules/filter/mobility-radius", json=body)
+    resp = _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body))
     assert resp.status_code == 200
     data = resp.json()
     assert data["radius_m"] is None
@@ -309,7 +316,7 @@ def test_endpoint_mobility_radius_scooter_uses_kickboard_radius():
             {"content_id": "far", "lat": 35.1796, "lng": 129.0756},
         ],
     }
-    resp = _client().post("/v1/rules/filter/mobility-radius", json=body)
+    resp = _client().post("/v1/rules/filter/mobility-radius", json=_sealed_body(body))
     assert resp.status_code == 200
     data = resp.json()
     assert data["radius_m"] == 10000

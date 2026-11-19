@@ -48,6 +48,7 @@ from typing import Literal
 from zoneinfo import ZoneInfo
 
 from fastapi import Request, APIRouter, Depends, HTTPException, Query
+from pydantic import ValidationError
 
 from map_project_hub.clients.hub_clients import (
     GooglePlacesApiError,
@@ -63,7 +64,6 @@ from map_project_hub.codes.air_codes import grade_pm10, grade_pm25, sido_name
 from map_project_hub.codes.kma_codes import label_sky
 from map_project_hub.config import settings
 from map_project_hub.routers.location_params import resolve_legs, resolve_pair, resolve_point
-from map_project_hub.routers.location_params import sealing_required
 from map_project_hub.crypto.location_seal import seal
 from starlette.responses import JSONResponse
 from map_project_hub.db.forecast_repo import (
@@ -805,8 +805,6 @@ async def sido_representative_grid(
 async def get_weather_now(
     request: Request,
     loc: str | None = Query(None, description="감싼 좌표"),
-    lat: float | None = Query(None, ge=33.0, le=43.0),
-    lng: float | None = Query(None, ge=124.0, le=132.0),
 ) -> WeatherNowResponse:
     """GET /v1/weather/now — 좌표 기준 현재 날씨
 
@@ -823,7 +821,7 @@ async def get_weather_now(
     것까지 쓸지는 설정(WEATHER_NOW_MAX_AGE_HOURS / AIR_MAX_AGE_HOURS)에 있다.
 
     Query 파라미터:
-        lat / lng: 기기 위치. 국내 범위 밖이면 422(FastAPI 검증).
+        loc: 감싼 좌표 {lat, lng}(필수). 열어 본 좌표가 국내 범위 밖이면 400.
 
     위치 취급:
         받은 좌표는 진입 직후 격자로 바꾸고 그 뒤로는 격자만 쓴다. 로그와
@@ -841,7 +839,7 @@ async def get_weather_now(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    lat, lng = resolve_point(request, loc, lat, lng)
+    lat, lng = resolve_point(request, loc)
     nx, ny = gps_to_grid(lat, lng)
     # 허용 위경도 사각형의 모서리는 격자 격자판 밖으로 벗어난다.
     if not (_GRID_NX_MIN <= nx <= _GRID_NX_MAX) or not (
@@ -1228,8 +1226,6 @@ async def _kakao_nearby(
 @router.get("/v1/places/nearby", response_model=PlacesResponse)
 async def get_nearby_places(
     request: Request,
-    lat: float | None = Query(None, ge=33.0, le=43.0),
-    lng: float | None = Query(None, ge=124.0, le=132.0),
     loc: str | None = Query(None, max_length=8192),
     category: str = Query(..., min_length=1, max_length=10),
     radius: int = Query(1000, ge=100, le=20000),
@@ -1241,7 +1237,7 @@ async def get_nearby_places(
     를 묻는 자리다. 가까운 것부터 온다.
 
     Query 파라미터:
-        lat/lng: 기준 좌표. 범위 밖 값은 여기서 막는다(오작동·주입 차단).
+        loc: 감싼 좌표 {lat, lng}(필수). 열어 본 좌표가 국내 범위 밖이면 400.
         category: stay | food | cafe. 카카오 분류 코드를 바깥에 드러내지 않는다.
         radius: 반경(m).
         size: 최대 결과 수.
@@ -1249,7 +1245,7 @@ async def get_nearby_places(
     분류를 모르면 400 이다. 조용히 빈 목록을 주면 부르는 쪽이 "근처에 없다"
     로 잘못 읽는다.
     """
-    lat, lng = resolve_point(request, loc, lat, lng)
+    lat, lng = resolve_point(request, loc)
     code = _NEARBY_CATEGORIES.get(category)
     if code is None:
         raise HTTPException(
@@ -1262,9 +1258,8 @@ async def get_nearby_places(
     for it in items:
         sources[it.source] = sources.get(it.source, 0) + 1
     response = PlacesResponse(places=items, count=len(items), sources=sources)
-    if sealing_required():
-        return JSONResponse({"loc": seal(response.model_dump(mode="json"))})
-    return response
+    # 주변 장소 목록은 요청 좌표를 드러내므로 응답도 감싸서 돌려준다.
+    return JSONResponse({"loc": seal(response.model_dump(mode="json"))})
 
 
 def _naver_cache_key(
@@ -1522,8 +1517,6 @@ async def get_place_photos(
     request: Request,
     query: str = Query(..., min_length=1, max_length=60),
     loc: str | None = Query(None, description="감싼 좌표"),
-    lat: float | None = Query(None, ge=33.0, le=43.0),
-    lng: float | None = Query(None, ge=124.0, le=132.0),
 ) -> PlacePhotosResponse:
     """GET /v1/places/photos — 장소 사진 조회.
 
@@ -1533,7 +1526,7 @@ async def get_place_photos(
 
     Query 파라미터:
         query: 장소명(1~60 글자, 필수).
-        lat / lng: 장소 좌표(필수). 국내 범위를 벗어나면 검증 실패.
+        loc: 감싼 좌표 {lat, lng}(필수). 열어 본 좌표가 국내 범위 밖이면 400.
 
     이미지 URL 은 수명이 짧다. 호출 측은 받은 URL 을 저장하지 말고 화면에
     쓸 때마다 이 endpoint 를 다시 부른다.
@@ -1547,7 +1540,7 @@ async def get_place_photos(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    lat, lng = resolve_point(request, loc, lat, lng)
+    lat, lng = resolve_point(request, loc)
     try:
         photos = await asyncio.wait_for(
             _google_photos(query, lat, lng),
@@ -1661,10 +1654,11 @@ async def get_directions_batch(
     """
     # 구간은 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    legs = [
-        leg if isinstance(leg, DirectionsLeg) else DirectionsLeg(**leg)
-        for leg in resolve_legs(request, req.loc, req.legs)
-    ]
+    try:
+        legs = [DirectionsLeg(**leg) for leg in resolve_legs(request, req.loc)]
+    except (TypeError, ValidationError):
+        # 봉투 안의 구간이 형식에 맞지 않는다. 좌표 해석기와 같은 문구로 거절한다.
+        raise HTTPException(status_code=400, detail="invalid location") from None
     use_stub = routing_stub_active(_osrm_base_url(req.mode))
     routes = await asyncio.gather(
         *(_route_one_leg(req.mode, leg, use_stub) for leg in legs)
@@ -1837,10 +1831,6 @@ async def _subway_route(
 async def get_subway_route(
     request: Request,
     loc: str | None = Query(None, description="감싼 좌표"),
-    start_lat: float | None = Query(None, ge=33.0, le=43.0),
-    start_lng: float | None = Query(None, ge=124.0, le=132.0),
-    end_lat: float | None = Query(None, ge=33.0, le=43.0),
-    end_lng: float | None = Query(None, ge=124.0, le=132.0),
 ) -> SubwayRouteResponse:
     """GET /v1/transit/subway — 지하철 단독 경로 조회.
 
@@ -1849,8 +1839,8 @@ async def get_subway_route(
     안내와 실제가 어긋난다.
 
     Query 파라미터:
-        start_lat / start_lng: 출발 좌표(필수).
-        end_lat / end_lng: 도착 좌표(필수). 국내 범위를 벗어나면 검증 실패.
+        loc: 감싼 좌표 {start_lat, start_lng, end_lat, end_lng}(필수). 열어 본
+            좌표가 국내 범위 밖이면 400.
 
     조회에 실패해도 5xx 를 내지 않는다. 대신 status 로 구분해 200 을 낸다
     (hub degrade 원칙). 외부가 느려 전체 제한 시간을 넘겨도 마찬가지다.
@@ -1860,9 +1850,7 @@ async def get_subway_route(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    start_lat, start_lng, end_lat, end_lng = resolve_pair(
-        request, loc, start_lat, start_lng, end_lat, end_lng
-    )
+    start_lat, start_lng, end_lat, end_lng = resolve_pair(request, loc)
     try:
         status, route = await asyncio.wait_for(
             _subway_route(start_lat, start_lng, end_lat, end_lng),
@@ -2038,10 +2026,6 @@ def _filter_routes_by_mode(routes: list[dict], mode: str) -> list[dict]:
 async def get_transit_routes(
     request: Request,
     loc: str | None = Query(None, description="감싼 좌표"),
-    start_lat: float | None = Query(None, ge=33.0, le=43.0),
-    start_lng: float | None = Query(None, ge=124.0, le=132.0),
-    end_lat: float | None = Query(None, ge=33.0, le=43.0),
-    end_lng: float | None = Query(None, ge=124.0, le=132.0),
     mode: Literal["all", "subway", "bus"] = Query("all"),
 ) -> TransitRouteOptionsResponse:
     """GET /v1/transit/routes — 대중교통 통합 길찾기(지하철·버스 모두).
@@ -2051,9 +2035,8 @@ async def get_transit_routes(
     "가능한 이동수단을 모두 보여주는" 화면은 이쪽을 쓴다.
 
     Query 파라미터:
-        loc: 감싼 좌표(열쇠가 설정된 배포에서는 이것만 받는다).
-        start_lat / start_lng / end_lat / end_lng: 열쇠가 없는 환경의 평문
-            좌표. 국내 범위를 벗어나면 검증 실패.
+        loc: 감싼 좌표 {start_lat, start_lng, end_lat, end_lng}(필수). 열어 본
+            좌표가 국내 범위 밖이면 400.
         mode: 화면이 고른 이동수단(기본 all). 거르는 규칙은
             _filter_routes_by_mode 참고. 위치 정보가 아니라 감싸지 않는다.
 
@@ -2069,9 +2052,7 @@ async def get_transit_routes(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    start_lat, start_lng, end_lat, end_lng = resolve_pair(
-        request, loc, start_lat, start_lng, end_lat, end_lng
-    )
+    start_lat, start_lng, end_lat, end_lng = resolve_pair(request, loc)
     try:
         status, routes = await asyncio.wait_for(
             _transit_routes(start_lat, start_lng, end_lat, end_lng),
@@ -2285,8 +2266,6 @@ async def _seoul_bike_all() -> tuple[str, list[dict]]:
 async def get_bike_stations(
     request: Request,
     loc: str | None = Query(None, description="감싼 좌표"),
-    lat: float | None = Query(None, ge=33.0, le=43.0),
-    lng: float | None = Query(None, ge=124.0, le=132.0),
     radius_m: int = Query(
         settings.SEOUL_BIKE_DEFAULT_RADIUS_M, ge=100, le=20000
     ),
@@ -2294,7 +2273,7 @@ async def get_bike_stations(
     """GET /v1/mobility/bike-stations — 좌표 주변 따릉이 대여소 조회.
 
     Query 파라미터:
-        lat / lng: 기준 좌표(필수). 국내 범위를 벗어나면 검증 실패.
+        loc: 감싼 좌표 {lat, lng}(필수). 열어 본 좌표가 국내 범위 밖이면 400.
         radius_m: 잘라 보낼 반경(m, 100~20000). 기본값은 설정에서 온다.
 
     발급처가 전량을 통째로 주므로 hub 가 한 벌만 받아 두고 요청 좌표 주변만
@@ -2311,7 +2290,7 @@ async def get_bike_stations(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    lat, lng = resolve_point(request, loc, lat, lng)
+    lat, lng = resolve_point(request, loc)
     if places_stub_active(settings.SEOUL_OPENAPI_KEY.get_secret_value()):
         rows = seoul_bike_stub(lat, lng)
         items = [BikeStation(**s) for s in rows]
@@ -2425,15 +2404,13 @@ async def _pm_vehicles(city: str | None) -> tuple[str, list[dict]]:
 async def get_pm_vehicles(
     request: Request,
     loc: str | None = Query(None, description="감싼 좌표"),
-    lat: float | None = Query(None, ge=33.0, le=43.0),
-    lng: float | None = Query(None, ge=124.0, le=132.0),
     radius_m: int = Query(settings.PM_DEFAULT_RADIUS_M, ge=100, le=20000),
     city: str | None = Query(None, min_length=1, max_length=30),
 ) -> PmVehiclesResponse:
     """GET /v1/mobility/pm-vehicles — 좌표 주변 공유 킥보드 조회.
 
     Query 파라미터:
-        lat / lng: 기준 좌표(필수). 국내 범위를 벗어나면 검증 실패.
+        loc: 감싼 좌표 {lat, lng}(필수). 열어 본 좌표가 국내 범위 밖이면 400.
         radius_m: 잘라 보낼 반경(m, 100~20000). 기본값은 설정에서 온다.
         city: 시군구명(선택). 발급처가 지역으로 좁혀 받을 수 있어 열어 둔다.
 
@@ -2447,7 +2424,7 @@ async def get_pm_vehicles(
     """
     # 좌표는 감싸서 온다. 여는 데 실패하면 여기서 요청이 끝난다 —
     # 평문으로 물러서면 감싸는 쪽이 고장 나도 아무도 알아차리지 못한다.
-    lat, lng = resolve_point(request, loc, lat, lng)
+    lat, lng = resolve_point(request, loc)
     pm_key = (
         settings.PM_SERVICE_KEY.get_secret_value()
         or settings.KMA_SERVICE_KEY.get_secret_value()

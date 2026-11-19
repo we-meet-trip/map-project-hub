@@ -31,22 +31,16 @@ class LatLng(BaseModel):
 class MobilityRadiusRequest(BaseModel):
     """MobilityRadiusRequest — 이동수단 반경 필터 요청.
 
-    origin: 반경 기준 출발지 좌표.
     mobility: 이동수단 문자열(foot/walk/bicycle/kickboard/car/transit).
-    candidates: 필터 대상 후보 dict 리스트(각 후보는 lat/lng 를 가진다).
-        최대 100건.
+    loc: 반경 기준 출발지(origin)와 필터 대상 후보(candidates, 각 후보는
+        lat/lng 를 가진다) 를 함께 감싼 봉투.
     """
 
     mobility: str = Field(min_length=1, max_length=12)
 
-    # 출발지와 후보를 함께 감싸서 보낼 때 쓰는 자리. 후보에도 좌표가 들어
-    # 있어 따로 감싸면 한쪽만 감싸는 실수가 생긴다. 열쇠가 설정돼 있으면
-    # 이쪽만 받고 아래 두 자리는 무시한다.
+    # 출발지와 후보를 함께 감싼 봉투 {origin, candidates}. 후보에도 좌표가
+    # 들어 있어 따로 감싸면 한쪽만 감싸는 실수가 생긴다.
     loc: str | None = None
-
-    # 감싸지 않고 보내던 예전 형태. 열쇠가 없을 때만 쓰인다.
-    origin: LatLng | None = None
-    candidates: list[dict] = Field(default_factory=list, max_length=100)
 
 
 class MobilityRadiusResponse(BaseModel):

@@ -31,6 +31,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from tests.wire import PAIR, POINT, seal_params, sealed
 from map_project_hub.clients.hub_clients import OdsayApiError, OdsayClient
 from map_project_hub.config import settings
 from map_project_hub.route_stubs import transit_routes_stub
@@ -46,7 +47,9 @@ from map_project_hub.schemas.hub_schemas import TransitRouteOption
 # 서울 시청 → 여의도역. 국내 범위 안이면 값 자체는 의미가 없다.
 START = {"start_lat": 37.5665, "start_lng": 126.9780}
 GOAL = {"end_lat": 37.5228, "end_lng": 126.9227}
-QUERY = {**START, **GOAL}
+COORDS = {**START, **GOAL}
+# 좌표는 봉투로만 보낸다. 봉투 수명(5분)보다 이 파일의 시험이 훨씬 짧다.
+QUERY = seal_params(COORDS, PAIR)
 
 
 def _client() -> TestClient:
@@ -183,9 +186,9 @@ def test_transit_routes_stub_total_time_matches_legs():
     ],
 )
 def test_transit_routes_rejects_out_of_range_coords(field, value):
-    """국내 위경도 범위를 벗어난 좌표는 422 로 막는다."""
-    params = {**QUERY, field: value}
-    assert _client().get("/v1/transit/routes", params=params).status_code == 422
+    """국내 위경도 범위를 벗어난 좌표는 400 으로 막는다."""
+    params = seal_params({**COORDS, field: value}, PAIR)
+    assert _client().get("/v1/transit/routes", params=params).status_code == 400
 
 
 @pytest.mark.parametrize(
@@ -193,12 +196,10 @@ def test_transit_routes_rejects_out_of_range_coords(field, value):
 )
 def test_transit_routes_requires_all_coords(missing):
     """네 좌표는 모두 필수다."""
-    params = {k: v for k, v in QUERY.items() if k != missing}
+    params = seal_params({k: v for k, v in COORDS.items() if k != missing}, PAIR)
     resp = _client().get("/v1/transit/routes", params=params)
-    # 좌표를 감쌀 수 있게 되면서 lat/lng 는 선택 인자가 됐다. 그래서 빠졌을 때
-    # 걸리는 자리가 형식 검증기(422)에서 좌표 해석기(400)로 옮겨졌다.
-    # 둘 다 요청이 잘못됐다는 뜻이라 부르는 쪽 동작은 달라지지 않는다.
-    assert resp.status_code in (400, 422)
+    # 봉투 안에 좌표가 빠져 있으면 좌표 해석기가 400 으로 거절한다.
+    assert resp.status_code == 400
 
 
 # ── 캐시 키 ────────────────────────────────────────────────────────

@@ -21,6 +21,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from tests.wire import PAIR, POINT, seal_params, sealed
 from map_project_hub.codes.air_codes import grade_pm10, grade_pm25, sido_name
 from map_project_hub.routers import hub_routers
 from map_project_hub.routers.hub_routers import _pick_air_station
@@ -185,7 +186,7 @@ def _stub_route(
 
 
 def _get(lat=37.5665, lng=126.9780):
-    return _client().get("/v1/weather/now", params={"lat": lat, "lng": lng})
+    return _client().get("/v1/weather/now", params=seal_params({"lat": lat, "lng": lng}))
 
 
 def test_weather_now_returns_stored_observation(monkeypatch):
@@ -391,9 +392,9 @@ def test_weather_now_omits_today_without_region(monkeypatch):
 
 
 def test_weather_now_rejects_out_of_country(monkeypatch):
-    """국내 범위 밖 좌표는 검증 단계에서 거절한다."""
+    """국내 범위 밖 좌표는 봉투를 연 뒤 좌표 해석기가 400 으로 거절한다."""
     _stub_route(monkeypatch)
-    assert _get(lat=10.0, lng=100.0).status_code == 422
+    assert _get(lat=10.0, lng=100.0).status_code == 400
 
 
 def test_coordinates_inside_box_but_off_grid_are_rejected(monkeypatch):

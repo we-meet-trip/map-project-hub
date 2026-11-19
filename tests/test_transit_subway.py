@@ -33,6 +33,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
+from tests.wire import PAIR, POINT, seal_params, sealed
 from map_project_hub.clients.hub_clients import OdsayApiError, OdsayClient
 from map_project_hub.config import settings
 from map_project_hub.route_stubs import subway_route_stub
@@ -68,7 +69,7 @@ def _params(**over) -> dict:
         "end_lng": _END[1],
     }
     base.update(over)
-    return base
+    return seal_params(base, PAIR)
 
 
 class _FakeCache:
@@ -156,29 +157,26 @@ def test_subway_stub_scales_with_distance():
 @pytest.mark.parametrize(
     "name", ["start_lat", "start_lng", "end_lat", "end_lng"]
 )
-def test_subway_missing_coordinate_422(name):
+def test_subway_missing_coordinate_400(name):
     """네 좌표는 모두 필수다."""
-    params = _params()
-    params.pop(name)
+    params = _params(**{name: None})
     resp = _client().get("/v1/transit/subway", params=params)
-    # 좌표를 감쌀 수 있게 되면서 lat/lng 는 선택 인자가 됐다. 그래서 빠졌을 때
-    # 걸리는 자리가 형식 검증기(422)에서 좌표 해석기(400)로 옮겨졌다.
-    # 둘 다 요청이 잘못됐다는 뜻이라 부르는 쪽 동작은 달라지지 않는다.
-    assert resp.status_code in (400, 422)
+    # 봉투 안에 좌표가 빠져 있으면 좌표 해석기가 400 으로 거절한다.
+    assert resp.status_code == 400
 
 
 @pytest.mark.parametrize("lat", [32.9, 43.1])
-def test_subway_lat_out_of_range_422(lat):
-    """위도가 국내 범위를 벗어나면 422 로 거절된다."""
+def test_subway_lat_out_of_range_400(lat):
+    """위도가 국내 범위를 벗어나면 400 으로 거절된다."""
     resp = _client().get("/v1/transit/subway", params=_params(start_lat=lat))
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 @pytest.mark.parametrize("lng", [123.9, 132.1])
-def test_subway_lng_out_of_range_422(lng):
-    """경도가 국내 범위를 벗어나면 422 로 거절된다."""
+def test_subway_lng_out_of_range_400(lng):
+    """경도가 국내 범위를 벗어나면 400 으로 거절된다."""
     resp = _client().get("/v1/transit/subway", params=_params(end_lng=lng))
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 def test_odsay_cache_key_deterministic():

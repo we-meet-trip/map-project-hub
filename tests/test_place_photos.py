@@ -23,6 +23,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from tests.wire import PAIR, POINT, seal_params, sealed
 from map_project_hub.clients.hub_clients import GooglePlacesApiError, GooglePlacesClient
 from map_project_hub.config import settings
 from map_project_hub.place_stubs import google_photos_stub
@@ -53,7 +54,7 @@ def _params(**over) -> dict:
     """기본 좌표가 채워진 질의 파라미터를 만든다."""
     base = {"query": "경복궁", "lat": _LAT, "lng": _LNG}
     base.update(over)
-    return base
+    return seal_params(base, POINT)
 
 
 def test_place_photos_stub_mode_shape(stub_mode):
@@ -93,29 +94,26 @@ def test_place_photos_missing_query_422():
 
 
 @pytest.mark.parametrize("missing", ["lat", "lng"])
-def test_place_photos_missing_coordinate_422(missing):
+def test_place_photos_missing_coordinate_400(missing):
     """좌표는 필수다 — 이름만으로는 다른 동네 지점이 잡힌다."""
-    params = _params()
-    params.pop(missing)
+    params = _params(**{missing: None})
     resp = _client().get("/v1/places/photos", params=params)
-    # 좌표를 감쌀 수 있게 되면서 lat/lng 는 선택 인자가 됐다. 그래서 빠졌을 때
-    # 걸리는 자리가 형식 검증기(422)에서 좌표 해석기(400)로 옮겨졌다.
-    # 둘 다 요청이 잘못됐다는 뜻이라 부르는 쪽 동작은 달라지지 않는다.
-    assert resp.status_code in (400, 422)
+    # 봉투 안에 좌표가 빠져 있으면 좌표 해석기가 400 으로 거절한다.
+    assert resp.status_code == 400
 
 
 @pytest.mark.parametrize("lat", [32.9, 43.1])
-def test_place_photos_lat_out_of_range_422(lat):
-    """위도가 국내 범위를 벗어나면 422 로 거절된다."""
+def test_place_photos_lat_out_of_range_400(lat):
+    """위도가 국내 범위를 벗어나면 400 으로 거절된다."""
     resp = _client().get("/v1/places/photos", params=_params(lat=lat))
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 @pytest.mark.parametrize("lng", [123.9, 132.1])
-def test_place_photos_lng_out_of_range_422(lng):
-    """경도가 국내 범위를 벗어나면 422 로 거절된다."""
+def test_place_photos_lng_out_of_range_400(lng):
+    """경도가 국내 범위를 벗어나면 400 으로 거절된다."""
     resp = _client().get("/v1/places/photos", params=_params(lng=lng))
-    assert resp.status_code == 422
+    assert resp.status_code == 400
 
 
 def test_place_photos_query_too_long_422():

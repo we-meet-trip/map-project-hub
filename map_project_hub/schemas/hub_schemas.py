@@ -399,18 +399,15 @@ class DirectionsBatchRequest(BaseModel):
 
     mode: 이동수단. walk|bicycle|scooter 만 허용(bus/transit 은 라우팅
         대상이 아니므로 BFF 가 호출 자체를 하지 않는다).
-    legs: 1~20개 구간. 응답 routes 는 이와 같은 길이·인덱스로 정렬된다.
+    loc: 1~20개 구간을 감싼 봉투. 응답 routes 는 구간과 같은 길이·인덱스로
+        정렬된다.
     """
 
     mode: Literal["walk", "bicycle", "scooter"]
 
-    # 구간을 감싸서 보낼 때 쓰는 자리. 좌표와 함께 장소 이름도 들어가는데,
+    # 구간 목록을 감싼 봉투 {legs: [...]}. 좌표와 함께 장소 이름도 들어가는데,
     # 이름만으로도 어디를 다니는지가 드러나므로 함께 감싼다.
-    # 열쇠가 설정돼 있으면 이쪽만 받고 아래 legs 는 무시한다.
     loc: str | None = None
-
-    # 감싸지 않고 보내던 예전 형태. 열쇠가 없을 때만 쓰인다.
-    legs: list[DirectionsLeg] = Field(default_factory=list, max_length=20)
 
 
 class DirectionsRoute(BaseModel):

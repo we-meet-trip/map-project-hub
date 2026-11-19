@@ -3,13 +3,11 @@
 좌표는 감싸서 온다(map_project_hub.crypto.location_seal). 여기서는 그 봉투를 열어 값으로
 되돌리고, 열 수 없으면 요청을 거절한다.
 
-**열쇠가 설정돼 있으면 값으로 온 좌표는 받지 않는다.** 봉투를 못 열었을 때
-평문으로 물러서면, 감싸는 쪽이 조용히 고장 나도 아무도 알아차리지 못한 채
-예전처럼 평문이 흐른다. 그 상태는 감싸지 않은 것과 같으면서 감쌌다고 믿게
-만든다는 점에서 더 나쁘다.
-
-열쇠가 없으면 예전처럼 값으로 받는다. 상대 서비스가 아직 감쌀 줄 모르는
-동안 넘어가기 위한 것이며, 그때는 부팅 시 한 번 경고를 남긴다.
+**값으로 온 좌표는 받지 않는다.** 봉투를 못 열었을 때 평문으로 물러서면,
+감싸는 쪽이 조용히 고장 나도 아무도 알아차리지 못한 채 평문이 흐른다. 그
+상태는 감싸지 않은 것과 같으면서 감쌌다고 믿게 만든다는 점에서 더 나쁘다.
+그래서 봉투 열쇠는 필수이고(부팅 때 확인 — map_project_hub.crypto.location_seal.require_key),
+평문 좌표를 받는 길은 두지 않는다.
 """
 from __future__ import annotations
 
@@ -17,18 +15,12 @@ import logging
 
 from fastapi import HTTPException, Request, status
 
-from map_project_hub.config import settings
 from map_project_hub.crypto.location_seal import SealError, open_seal
 
 logger = logging.getLogger(__name__)
 
 KOREA_LAT = (33.0, 43.0)
 KOREA_LNG = (124.0, 132.0)
-
-
-def sealing_required() -> bool:
-    """열쇠가 있으면 봉투만 받는다."""
-    return bool(settings.LOCATION_WIRE_KEY.get_secret_value())
 
 
 def _reject(reason: str) -> HTTPException:
@@ -67,98 +59,77 @@ def _opened(request: Request, loc: str | None, fields: tuple[str, ...]) -> dict:
     return values
 
 
-def resolve_point(
-    request: Request, loc: str | None, lat: float | None, lng: float | None
-) -> tuple[float, float]:
+def resolve_point(request: Request, loc: str | None) -> tuple[float, float]:
     """한 지점을 꺼낸다."""
-    if sealing_required():
-        values = _opened(request, loc, ("lat", "lng"))
-        lat, lng = values["lat"], values["lng"]
-    elif lat is None or lng is None:
-        raise _reject("missing lat/lng")
+    values = _opened(request, loc, ("lat", "lng"))
+    lat, lng = values["lat"], values["lng"]
     if not _in_korea(lat, lng):
         raise _reject("out of range")
     return lat, lng
 
 
 def resolve_pair(
-    request: Request,
-    loc: str | None,
-    start_lat: float | None,
-    start_lng: float | None,
-    end_lat: float | None,
-    end_lng: float | None,
+    request: Request, loc: str | None
 ) -> tuple[float, float, float, float]:
     """출발·도착 두 지점을 꺼낸다."""
-    if sealing_required():
-        values = _opened(
-            request, loc, ("start_lat", "start_lng", "end_lat", "end_lng")
-        )
-        start_lat = values["start_lat"]
-        start_lng = values["start_lng"]
-        end_lat = values["end_lat"]
-        end_lng = values["end_lng"]
-    elif None in (start_lat, start_lng, end_lat, end_lng):
-        raise _reject("missing start/end")
+    values = _opened(request, loc, ("start_lat", "start_lng", "end_lat", "end_lng"))
+    start_lat = values["start_lat"]
+    start_lng = values["start_lng"]
+    end_lat = values["end_lat"]
+    end_lng = values["end_lng"]
     if not _in_korea(start_lat, start_lng) or not _in_korea(end_lat, end_lng):
         raise _reject("out of range")
     return start_lat, start_lng, end_lat, end_lng
 
 
-def resolve_legs(request: Request, loc: str | None, legs: list) -> list:
+def resolve_legs(request: Request, loc: str | None) -> list:
     """경로 요청의 구간 목록을 꺼낸다.
 
     구간에는 좌표뿐 아니라 장소 이름도 들어간다. 이름만으로도 어디를 다니는지가
     드러나므로 함께 감싸고, 함께 꺼낸다.
     """
-    if sealing_required():
-        if loc is None:
-            raise _reject("missing sealed legs")
-        try:
-            payload = open_seal(loc)
-        except SealError as e:
-            raise _reject(str(e)) from e
-        opened = payload.get("legs")
-        if not isinstance(opened, list):
-            raise _reject("sealed legs missing")
-        legs = opened
-        logger.info(
-            "location seal opened path=%s caller=%s legs=%d",
-            request.url.path,
-            request.client.host if request.client else "unknown",
-            len(legs),
-        )
+    if loc is None:
+        raise _reject("missing sealed legs")
+    try:
+        payload = open_seal(loc)
+    except SealError as e:
+        raise _reject(str(e)) from e
+    legs = payload.get("legs")
+    if not isinstance(legs, list):
+        raise _reject("sealed legs missing")
+    logger.info(
+        "location seal opened path=%s caller=%s legs=%d",
+        request.url.path,
+        request.client.host if request.client else "unknown",
+        len(legs),
+    )
     if not 1 <= len(legs) <= 20:
         raise _reject("legs out of range")
     return legs
 
 
 def resolve_origin_and_candidates(
-    request: Request, loc: str | None, origin, candidates: list
+    request: Request, loc: str | None
 ) -> tuple[dict, list]:
     """반경 필터 요청에서 출발지와 후보를 꺼낸다.
 
     둘을 한 봉투에 담는 이유는, 따로 담으면 한쪽만 감싸는 실수가 생기고
     그 실수는 나머지 한쪽이 평문으로 흐르는 형태로만 드러나기 때문이다.
     """
-    if sealing_required():
-        if loc is None:
-            raise _reject("missing sealed origin")
-        try:
-            payload = open_seal(loc)
-        except SealError as e:
-            raise _reject(str(e)) from e
-        opened_origin = payload.get("origin")
-        opened_candidates = payload.get("candidates")
-        if not isinstance(opened_origin, dict) or not isinstance(opened_candidates, list):
-            raise _reject("sealed origin malformed")
-        logger.info(
-            "location seal opened path=%s caller=%s candidates=%d",
-            request.url.path,
-            request.client.host if request.client else "unknown",
-            len(opened_candidates),
-        )
-        return opened_origin, opened_candidates
-    if origin is None:
-        raise _reject("missing origin")
-    return {"lat": origin.lat, "lng": origin.lng}, candidates
+    if loc is None:
+        raise _reject("missing sealed origin")
+    try:
+        payload = open_seal(loc)
+    except SealError as e:
+        raise _reject(str(e)) from e
+    opened_origin = payload.get("origin")
+    opened_candidates = payload.get("candidates")
+    if not isinstance(opened_origin, dict) or not isinstance(opened_candidates, list):
+        raise _reject("sealed origin malformed")
+    logger.info(
+        "location seal opened path=%s caller=%s candidates=%d",
+        request.url.path,
+        request.client.host if request.client else "unknown",
+        len(opened_candidates),
+    )
+    return opened_origin, opened_candidates

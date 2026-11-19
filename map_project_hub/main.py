@@ -41,6 +41,7 @@ from map_project_hub.clients.hub_clients import (
 )
 from map_project_hub.config import settings
 from map_project_hub.db.hub_db import dispose_hub_db, get_hub_db
+from map_project_hub.crypto.location_seal import require_key
 from map_project_hub.db.schema_contract import validate_runtime_schema
 from map_project_hub.hub_dependencies import (
     clear_place_clients,
@@ -206,6 +207,9 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
     if settings.AUTH_ENFORCED and settings.PLACES_STUB_MODE:
         raise RuntimeError("PLACES_STUB_MODE is forbidden when AUTH_ENFORCED=true")
+
+    # 좌표는 봉투로만 받는다. 열쇠가 없으면 좌표가 담긴 요청을 하나도 못 연다.
+    require_key()
 
     # AUTH_ENFORCED=true 인데 공유 비밀이 비어 있으면 공개 endpoint 가
     # 사실상 무인증으로 열리므로, 부팅을 중단해(fail-fast) 설정 오류를 막는다.
