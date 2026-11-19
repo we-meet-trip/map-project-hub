@@ -65,9 +65,12 @@ class Settings(BaseSettings):
         요구한다. 기본 false = 현행 데모 동작(공개 endpoint 무인증).
     """
 
+    # 빈 값(VAR=)은 '설정하지 않음'으로 본다. 실행 구성이 값 없는 변수를 빈
+    # 문자열로 넘겨도 불리언·숫자 설정이 기본값으로 떨어져 부팅이 깨지지 않는다.
+    # 기본값이 없는 HUB_DATABASE_URL 은 빈 값이면 '필수 값 없음'으로 실패한다.
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore",
-        env_prefix="HUB_", populate_by_name=True,
+        env_prefix="HUB_", populate_by_name=True, env_ignore_empty=True,
     )
 
     HUB_DATABASE_URL: str = Field(validation_alias="HUB_DATABASE_URL")
