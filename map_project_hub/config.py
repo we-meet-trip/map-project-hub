@@ -116,8 +116,8 @@ class Settings(BaseSettings):
     DURUNUBI_RADIUS_M: int = 20000
 
     # [장소 보강 - 네이버 블로그 리뷰]
-    # NAVER_CLIENT_ID/SECRET 이 비어 있으면 실제 호출 대신 고정 스텁 응답을
-    # 사용한다(키 발급 전 인터페이스 검증용). 두 시크릿은 요청 헤더
+    # NAVER_CLIENT_ID/SECRET 이 하나라도 비어 있으면 후기를 부르지 않고 빈
+    # 목록을 낸다(고정 스텁은 명시 스텁 모드에서만). 두 시크릿은 요청 헤더
     # (X-Naver-Client-Id / X-Naver-Client-Secret)로만 전달되며 URL 쿼리에는
     # 실리지 않는다.
     NAVER_CLIENT_ID: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_NAVER_CLIENT_ID")
@@ -129,8 +129,8 @@ class Settings(BaseSettings):
     NAVER_BLOG_DEFAULT_DISPLAY: int = 5
 
     # [장소 보강 - Google 장소 사진]
-    # GOOGLE_MAPS_API_KEY 가 비어 있으면 실제 호출 대신 고정 스텁 응답을
-    # 사용한다. 키는 X-Goog-Api-Key 헤더로만 전달되며 URL 쿼리에는 실리지
+    # GOOGLE_MAPS_API_KEY 가 비어 있으면 사진을 부르지 않는다(고정 스텁은
+    # 명시 스텁 모드에서만). 키는 X-Goog-Api-Key 헤더로만 전달되며 URL 쿼리에는 실리지
     # 않는다.
     #
     # 조회는 세 단계로 나뉜다. 검색어+좌표로 장소를 특정하고, 그 장소의
@@ -168,7 +168,8 @@ class Settings(BaseSettings):
     GOOGLE_PHOTOS_DAILY_MEDIA_CAP: int = 50
 
     # [지하철 경로 - ODsay]
-    # ODSAY_API_KEY 가 비어 있으면 실제 호출 대신 고정 스텁 응답을 쓴다.
+    # ODSAY_API_KEY 가 비어 있으면 대중교통을 부르지 않는다(고정 스텁은 명시
+    # 스텁 모드에서만).
     # 키는 URL 쿼리에 실려 나가므로 오류 본문·예외 메시지를 그대로 로그에
     # 올리지 않는다(_redact_secret 이 가린다).
     #
@@ -215,7 +216,8 @@ class Settings(BaseSettings):
     TRANSIT_LANE_ENABLED: bool = False
 
     # [따릉이 대여소 - 서울 열린데이터광장]
-    # SEOUL_OPENAPI_KEY 가 비어 있으면 고정 스텁 응답을 쓴다. 키가 URL 경로에
+    # SEOUL_OPENAPI_KEY 가 비어 있으면 따릉이를 부르지 않는다(고정 스텁은 명시
+    # 스텁 모드에서만). 키가 URL 경로에
     # 실리는 형태라 여기도 로그 가리기가 필요하다.
     #
     # 발급처가 https 를 받지 않아 이 호출만 평문으로 나간다. 앱이 직접 부르지
@@ -240,7 +242,7 @@ class Settings(BaseSettings):
     # PM_SERVICE_KEY 가 비어 있으면 KMA_SERVICE_KEY 를 그대로 쓴다 — 같은
     # 발급처(data.go.kr)의 한 계정 키로 여러 서비스가 열려 있는 경우가 흔해
     # 키를 두 번 적지 않아도 되게 한다. 대기오염 쪽과 같은 방식이다.
-    # 둘 다 비면 스텁으로 동작한다.
+    # 둘 다 비면 킥보드를 부르지 않는다(고정 스텁은 명시 스텁 모드에서만).
     #
     # 키가 쿼리에 실려 나가므로 오류 본문·예외 메시지를 그대로 로그에 올리지
     # 않는다.
@@ -274,7 +276,8 @@ class Settings(BaseSettings):
     # [현재 날씨 - 초단기실황 + 대기오염]
     # AIRKOREA_SERVICE_KEY 는 data.go.kr 대기오염정보 서비스 키. 비어 있으면
     # KMA_SERVICE_KEY 를 그대로 쓴다 — 두 서비스가 한 계정 키로 열려 있는
-    # 경우가 흔해서, 키를 두 번 적지 않아도 되게 한다. 둘 다 비면 스텁.
+    # 경우가 흔해서, 키를 두 번 적지 않아도 되게 한다. 둘 다 비면 대기 수집을
+    # 건너뛴다.
     AIRKOREA_SERVICE_KEY: SecretStr = SecretStr("")
     # 아래 곁들이 정보 예산 안에서 끝나야 한다. 예산이 먼저 끝나면 이 호출이
     # 도중에 잘리는데, 그러면 실패를 기억해 두는 자리(아래 실패 캐시)까지

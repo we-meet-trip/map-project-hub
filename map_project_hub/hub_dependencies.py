@@ -1,8 +1,8 @@
 """요청 경로에서 쓰는 외부 클라이언트/캐시 싱글톤 접근자.
 
 lifespan 이 startup 에 인스턴스를 만들어 본 모듈의 슬롯에 주입하고,
-라우터가 get_* 로 꺼내 쓴다. 키가 없어 스텁으로 동작할 때 카카오
-클라이언트 슬롯은 None 으로 남을 수 있으며, 그 판단은 라우터가 한다.
+라우터가 get_* 로 꺼내 쓴다. 키가 없거나 명시 스텁 모드면 슬롯은 None
+으로 남으며, 스텁을 쓸지 '조회 불가'로 답할지는 라우터가 정한다.
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ _cache: RedisCache | None = None
 # 그 판단(스텁 사용)은 라우터가 한다.
 _osrm_foot: OsrmClient | None = None
 _osrm_bicycle: OsrmClient | None = None
-# 지하철 경로/따릉이 대여소/공유 킥보드. 키가 없어 스텁으로 동작하면 None 으로
+# 지하철 경로/따릉이 대여소/공유 킥보드. 키가 없거나 명시 스텁 모드면 None 으로
 # 남고, 그 판단은 라우터가 한다.
 _odsay: OdsayClient | None = None
 # 예비 키로 만든 두 번째 지하철 클라이언트. 예비 키가 없으면 None 이다.
@@ -48,7 +48,7 @@ def set_naver_client(naver: NaverBlogClient | None) -> None:
     """lifespan startup 에서 네이버 블로그 클라이언트를 주입한다.
 
     set_place_clients 와 분리해 둔다(카카오 시그니처 보존). 키가 없어
-    스텁으로 동작할 때는 None 이 주입되며, 그 판단은 라우터가 한다.
+    키가 없거나 명시 스텁 모드면 None 이 주입되며, 그 판단은 라우터가 한다.
     """
     global _naver
     _naver = naver
@@ -58,7 +58,7 @@ def set_google_client(google: GooglePlacesClient | None) -> None:
     """lifespan startup 에서 Google 장소 클라이언트를 주입한다.
 
     set_place_clients 와 분리해 둔다(카카오 시그니처 보존). 키가 없어
-    스텁으로 동작할 때는 None 이 주입되며, 그 판단은 라우터가 한다.
+    키가 없거나 명시 스텁 모드면 None 이 주입되며, 그 판단은 라우터가 한다.
     """
     global _google
     _google = google
@@ -89,7 +89,7 @@ def set_osrm_clients(
 ) -> None:
     """lifespan startup 에서 프로파일별 OSRM 클라이언트를 주입한다.
 
-    base URL 이 없어 스텁으로 동작하는 프로파일은 None 이 주입되며, 그
+    base URL 이 없거나 명시 스텁 모드인 프로파일은 None 이 주입되며, 그
     판단(스텁 사용)은 라우터가 한다.
     """
     global _osrm_foot, _osrm_bicycle
@@ -114,7 +114,7 @@ def set_odsay_clients(
 ) -> None:
     """lifespan startup 에서 지하철 경로 클라이언트를 주입한다.
 
-    키가 없어 스텁으로 동작할 때는 None 이 주입되며, 그 판단은 라우터가 한다.
+    키가 없거나 명시 스텁 모드면 None 이 주입되며, 그 판단은 라우터가 한다.
     예비 키를 채우지 않았으면 fallback 도 None 이다.
     """
     global _odsay, _odsay_fallback
@@ -135,7 +135,7 @@ def get_odsay_fallback_client() -> OdsayClient | None:
 def set_pm_client(pm: PmClient | None) -> None:
     """lifespan startup 에서 공유 킥보드 클라이언트를 주입한다.
 
-    키가 없어 스텁으로 동작할 때는 None 이 주입되며, 그 판단은 라우터가 한다.
+    키가 없거나 명시 스텁 모드면 None 이 주입되며, 그 판단은 라우터가 한다.
     """
     global _pm
     _pm = pm
@@ -149,7 +149,7 @@ def get_pm_client() -> PmClient | None:
 def set_seoul_bike_client(seoul_bike: SeoulBikeClient | None) -> None:
     """lifespan startup 에서 따릉이 대여소 클라이언트를 주입한다.
 
-    키가 없어 스텁으로 동작할 때는 None 이 주입되며, 그 판단은 라우터가 한다.
+    키가 없거나 명시 스텁 모드면 None 이 주입되며, 그 판단은 라우터가 한다.
     """
     global _seoul_bike
     _seoul_bike = seoul_bike

@@ -1291,8 +1291,8 @@ async def _naver_reviews(
         if cached is not None:
             return cached
 
-    # 네이버는 ID/시크릿 두 자격증명이 모두 있어야 실호출한다. 하나라도
-    # 비어 있으면(또는 강제 스텁 모드면) 스텁 응답으로 대체한다.
+    # 네이버는 ID/시크릿 두 자격증명이 모두 있어야 실호출한다. 명시 스텁
+    # 모드면 스텁 응답을, 하나라도 비어 있으면(클라이언트 없음) 빈 목록을 낸다.
     naver_id = settings.NAVER_CLIENT_ID.get_secret_value()
     naver_secret = settings.NAVER_CLIENT_SECRET.get_secret_value()
     if places_stub_active(naver_id) or places_stub_active(naver_secret):
@@ -1326,7 +1326,7 @@ async def get_reviews(
     """GET /v1/reviews — 검색어에 대한 네이버 블로그 리뷰 조회.
 
     장소 보강용 블로그 리뷰를 조회한다. 결과는 L1 캐시(6h)에 담기며,
-    자격증명이 없으면 스텁으로 동작한다.
+    자격증명이 없으면 부르지 않고 빈 목록을 낸다(스텁은 명시 스텁 모드에서만).
 
     Query 파라미터:
         query: 검색어(1~60 글자, 필수).
