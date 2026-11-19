@@ -29,7 +29,7 @@ def test_stub_and_live_cache_entries_are_isolated(monkeypatch):
     stub = hub_routers._nearby_cache_key(37.5, 127, "CE7", 1000, 10)
     monkeypatch.setattr(settings, "PLACES_STUB_MODE", False)
     live = hub_routers._nearby_cache_key(37.5, 127, "CE7", 1000, 10)
-    assert stub != live and "verified-v2" in live
+    assert stub.endswith(":stub") and live.endswith(":live")
 
 
 def _client():

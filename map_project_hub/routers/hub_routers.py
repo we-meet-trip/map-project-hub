@@ -973,9 +973,12 @@ def _model_shape(model) -> str:
 
 
 def _provider_cache_key(key: str) -> str:
-    """기존 자동 스텁 캐시를 읽지 않고 명시 스텁과 실측 결과도 분리한다."""
+    """명시 스텁 결과와 실제 공급자 결과를 서로 다른 키에 둔다.
+
+    로컬 시험에서 스텁으로 채운 항목이 실제 응답으로 다시 나가지 않게 한다.
+    """
     mode = "stub" if settings.PLACES_STUB_MODE and not settings.AUTH_ENFORCED else "live"
-    return f"{key}:verified-v2:{mode}"
+    return f"{key}:{mode}"
 
 
 def _kakao_cache_key(

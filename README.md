@@ -271,7 +271,7 @@ MIT — see [LICENSE](LICENSE).
 
 `PLACES_STUB_MODE=false`에서는 키나 라우팅 URL이 없어도 가짜 성공 데이터를 만들지 않는다.
 스텁은 인증을 끈 로컬 시험에서 `PLACES_STUB_MODE=true`를 명시할 때만 사용하며,
-`AUTH_ENFORCED=true`와 함께 켜면 부팅을 거절한다. 실측/스텁 캐시는 `verified-v2`
+`AUTH_ENFORCED=true`와 함께 켜면 부팅을 거절한다. 실측/스텁 캐시는 키 끝의 `:live`/`:stub`
 구분을 사용해 과거 자동 스텁 캐시나 로컬 시험 결과를 운영 응답으로 재사용하지 않는다.
 기존 캐시 및 사용자 데이터는 삭제하지 않는다.
 
