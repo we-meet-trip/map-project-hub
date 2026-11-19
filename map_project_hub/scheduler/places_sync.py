@@ -18,6 +18,7 @@ from map_project_hub.clients.hub_clients import DurunubiApiError, DurunubiClient
 from map_project_hub.config import settings
 from map_project_hub.db.places_repo import count_courses, upsert_course
 from map_project_hub.place_stubs import durunubi_course_stub, places_stub_active
+from map_project_hub.scheduler.key_guard import missing_key
 from map_project_hub.utils.gpx import fetch_geometry
 
 logger = logging.getLogger(__name__)
@@ -110,7 +111,8 @@ async def durunubi_sync_loop(force: bool = False) -> None:
         재기동 루프가 외부에 반복 요청하는 것을 막는다. 주기 동기화(True)는
         변경 반영을 위해 항상 다시 적재한다.
 
-    키가 없으면 스텁 코스를 적재한다. 키가 있으면 코스 목록을 페이지로
+    스텁 모드면 스텁 코스를 적재하고, 스텁 모드가 아닌데 키가 비었으면
+    아무것도 부르지 않고 건너뛴다. 키가 있으면 코스 목록을 페이지로
     순회하며 각 코스의 GPX 좌표를 채워 upsert 한다. 한 코스/페이지의
     실패는 경고만 남기고 가능한 범위까지 계속 진행한다.
 
@@ -133,6 +135,8 @@ async def durunubi_sync_loop(force: bool = False) -> None:
         logger.info(
             "durunubi sync (stub) total=%d", await count_courses()
         )
+        return
+    if missing_key("durunubi sync", key, "TOUR_API_SERVICE_KEY"):
         return
 
     num_rows = settings.DURUNUBI_NUMOFROWS

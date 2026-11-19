@@ -26,10 +26,13 @@ class Settings(BaseSettings):
     [필수 - 환경변수에서 반드시 주입되어야 하는 값]
     HUB_DATABASE_URL: SQLAlchemy 비동기 DSN. asyncpg 또는 psycopg_async
         드라이버 명세를 포함한 문자열을 그대로 받아 create_async_engine 에
-        전달된다. Alembic env.py 는 같은 값을 동기 드라이버 명세로 치환한다.
-    KMA_SERVICE_KEY: 기상청 단기/중기 예보 API 호출에 쓰는 서비스 키.
+        전달된다. 마이그레이션은 이 값을 쓰지 않고 별도 일회성 작업이
+        HUB_MIGRATION_DATABASE_URL 로 접속한다(map_project_hub.db.migrate).
 
     [선택 - 기본값 있음]
+    KMA_SERVICE_KEY: 기상청 단기·중기·실황 예보 API 호출에 쓰는 서비스 키.
+        기본 빈 문자열이며, 비어 있으면 예보 수집 잡이 발급처를 부르지 않고
+        건너뛴다(map_project_hub.scheduler.key_guard).
     INTERNAL_SERVICE_TOKEN: /internal/* endpoint 호출 시 헤더
         X-Internal-Token 과 일치 여부를 검사하는 공유 비밀. 기본 빈 문자열
         은 미설정 상태를 의미하므로 운영 환경에서는 반드시 별도 값을 주입.
@@ -60,7 +63,7 @@ class Settings(BaseSettings):
 
     HUB_DATABASE_URL: str
     # 시크릿은 SecretStr 로 감싸 로그/repr 노출을 방지한다(사용 시 .get_secret_value()).
-    KMA_SERVICE_KEY: SecretStr
+    KMA_SERVICE_KEY: SecretStr = SecretStr("")
     INTERNAL_SERVICE_TOKEN: SecretStr = SecretStr("")
     HUB_ADMIN_INTERNAL_TOKEN: SecretStr = SecretStr("")
 
