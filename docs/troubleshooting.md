@@ -10,7 +10,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 같은 광역 안에서 가장 가까운 **활성 구독 격자**를 골라 그 좌표로 조회한다. 이어서 구독 격자를 시군구 대표 좌표로 넓혔다(마이그레이션 0009, 같은 격자는 한 번만).
 - **검증**: 실제 시드 좌표로 격자 선택 규칙을 고정한 시험(`tests/test_grid_selection.py`).
 - **교훈**: "적재하는 키"와 "조회하는 키"가 다르면 데이터가 있어도 조회가 비어 나온다. 이 증상은 오류가 아니라 그럴듯한 빈 값으로 드러나서, 적재와 조회가 같은 저장소 모듈을 공유하게 묶어 두는 편이 안전하다.
-- **관련 커밋**: {{commit:7b613e6}}, {{commit:cb61b9d}}, {{commit:5c68437}}
+- **관련 커밋**: [`70b01ef`](https://github.com/we-meet-trip/map-project-hub/commit/70b01ef5cf373d8bed5d1598f51208ab06db578d), [`a10c616`](https://github.com/we-meet-trip/map-project-hub/commit/a10c6165e16bb11d8606a13aadb7ec58ddb68a78), [`f596616`](https://github.com/we-meet-trip/map-project-hub/commit/f5966163bc55ebf0fa8ac23eba3f63c2d021e440)
 
 ### T-WEATHER-02 영남 D+3 이후 하늘·강수가 반대 권역 값으로 나온다
 - **증상**: 대구·경북과 부산·울산·경남에서 D+3 이후 하늘 상태·강수 확률이 서로 바뀌어 나왔다. 기온은 맞아서 한 응답 안에 두 권역이 섞였다.
@@ -18,7 +18,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 마이그레이션 0007 로 다섯 행의 코드를 바로잡았다.
 - **검증**: 시도별로 육상·기온 코드 계열이 서로 맞는지 보는 시험.
 - **교훈**: 손으로 만든 대응표는 다른 열과의 일관성(같은 계열인지)으로 검증할 수 있다. 시드는 고치지 않고 마이그레이션으로 고치면 이미 적재된 환경도 같은 결과가 된다.
-- **관련 커밋**: {{commit:b3616ac}}
+- **관련 커밋**: [`c8c25a8`](https://github.com/we-meet-trip/map-project-hub/commit/c8c25a87897889fee55980546927df8bcf2b393e)
 
 ### T-WEATHER-03 강원 9개 시군구의 격자·위도가 엉뚱하다
 - **증상**: 강원 9개 시군구가 "시군구 대표 행"으로 잡히지 않아 지역 조회가 읍면동 폴백으로 흘렀고, 예보 조회는 다른 격자로 나갔다. 위도는 2천만 근처 값이었다.
@@ -26,7 +26,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 마이그레이션 0008 이 밀린 값에서 원래 값을 되짚어(읍면동 칸 → nx, nx → ny, 경도 → 위도) 바로잡고, 경도는 같은 군에서 격자가 일치하는 읍·동의 좌표를 가져온다.
 - **검증**: 교정 뒤 위도가 국내 범위인지, 대표 행으로 잡히는지 보는 시험.
 - **교훈**: 범위 제약(CHECK)은 "값이 그럴듯한가"만 본다. 열이 통째로 밀린 손상은 서로 다른 열의 관계(위도가 30~40대인가)로만 잡힌다.
-- **관련 커밋**: {{commit:5c68437}}
+- **관련 커밋**: [`f596616`](https://github.com/we-meet-trip/map-project-hub/commit/f5966163bc55ebf0fa8ac23eba3f63c2d021e440)
 
 ### T-WEATHER-04 중기예보 D+3 칸이 비고 날짜가 하루 어긋난다
 - **증상**: 일별 예보에서 D+3 이 비고, 중기 예보가 하루 밀려 붙었다.
@@ -41,7 +41,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 모든 페이지의 `totalCount` 를 정수로 확인하고 페이지 사이에 같아야 하며, 빠지거나 겹치는 행이 있으면 그 발표분 전체를 적재하지 않는다. JSON 이 아니면 고정 코드(`NON_JSON`)와 고정 문구만 남긴다.
 - **검증**: `tests/test_kma_forecast_contract.py`.
 - **교훈**: 공급자 실패는 "모른다"로 남겨야 한다. 일부만 받은 값을 성공으로 적재하면 맑음·강수 0% 같은 그럴듯한 오답이 된다.
-- **관련 커밋**: {{commit:46d3f4a}}
+- **관련 커밋**: [`ab2cc9f`](https://github.com/we-meet-trip/map-project-hub/commit/ab2cc9fe839e2dda635f904126f9b89306684a9d)
 
 ### T-WEATHER-06 키가 없는데 수집 잡이 거절을 수백 번 받는다
 - **증상**: 기상청 키를 넣지 않은 환경에서 부팅할 때마다 단기·중기 폴링이 격자 수만큼 401 을 받아 가며 재시도했고, 경고 로그가 화면을 덮었다.
@@ -49,7 +49,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 수집 잡마다 키가 비었는지 스텁 판정과 따로 보고, 비었으면 처음 한 번만 경고하고 건너뛴다(`map_project_hub/scheduler/key_guard.py`). 외부 API 는 키를 넣은 사람만 부른다.
 - **검증**: `tests/test_missing_provider_keys.py` — 키 확인을 끄면 다섯 잡의 시험이 모두 실패하는 것도 확인했다.
 - **교훈**: 하나의 판정 함수에 두 가지 뜻("키가 없다", "스텁으로 동작한다")을 겹쳐 두면 한쪽 뜻을 바꿀 때 다른 쪽이 조용히 풀린다.
-- **관련 커밋**: {{commit:1d6e578}}, {{commit:1399ee1}}
+- **관련 커밋**: [`e47a3ec`](https://github.com/we-meet-trip/map-project-hub/commit/e47a3ecaadc7ad734fa8255bd10d5e32cc69760a), [`673a4fd`](https://github.com/we-meet-trip/map-project-hub/commit/673a4fd7401a0dc5bb40af9e1d4b5aa1360c1137)
 
 ## 캐시
 
@@ -59,7 +59,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 당시에는 캐시 네임스페이스에 판 번호를 박고 모양이 바뀔 때마다 올렸다. 지금은 응답 모델 스키마의 지문을 키에 넣어 모델이 바뀌면 키가 저절로 바뀌게 했다([architecture.md](architecture.md) 8절).
 - **검증**: 모델에 필드를 더하면 지문이 바뀌는지 보는 시험(`tests/test_transit_routes.py`).
 - **교훈**: 캐시 값의 스키마도 계약이다. 손으로 올리는 판 번호는 빠뜨리기 쉽다 — 스키마에서 키를 파생하면 빠뜨릴 수 없다.
-- **관련 커밋**: {{commit:32d08f0}}
+- **관련 커밋**: [`ad493aa`](https://github.com/we-meet-trip/map-project-hub/commit/ad493aa7d93916be85a91ec21a39e00b657e4993)
 
 ### T-CACHE-02 경로 그래프를 바꿔도 옛 경로가 나간다
 - **증상**: OSRM 그래프를 다시 만들어도 캐시된 옛 경로가 7일 동안 나갔고, 응답만 보고는 어느 그래프에서 나온 경로인지 알 수 없었다.
@@ -67,7 +67,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 그래프 판(`HUB_OSRM_DATA_VERSION`)과 지문(`HUB_OSRM_GRAPH_FINGERPRINT`)을 캐시 키에 넣고, 응답의 `data_version` 이 설정과 다르면 버린다. 응답에 출처와 프로파일을 싣는다.
 - **검증**: `tests/test_directions.py`.
 - **교훈**: 파생 데이터를 캐시할 때는 원천의 판을 키에 넣는다.
-- **관련 커밋**: {{commit:bf62c0e}}
+- **관련 커밋**: [`1ea1cb1`](https://github.com/we-meet-trip/map-project-hub/commit/1ea1cb19fe6ea4d7fe114f0f383380294df1ff58)
 
 ## 대중교통·이동수단
 
@@ -77,7 +77,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 접두사를 붙여 부르고(`OdsayClient.load_lane`), 받은 노선 좌표를 구간 순서에 맞춰 합치는 순수 함수와 `POST /v1/transit/routes/lane` 을 단계적으로 붙였다. 개수가 맞지 않으면 원래 좌표를 그대로 둔다.
 - **검증**: `tests/test_transit_routes.py`(접두사, 합치기, 개수 불일치).
 - **교훈**: "외부 API 가 안 된다"는 결론은 실제 요청 원문을 다시 보고 내린다.
-- **관련 커밋**: {{commit:9bbcda8}}, {{commit:8aea510}}
+- **관련 커밋**: [`2c50bf2`](https://github.com/we-meet-trip/map-project-hub/commit/2c50bf2111d282bc13d4863cbfa86ebf17f80f4d), [`51528e8`](https://github.com/we-meet-trip/map-project-hub/commit/51528e875ab515ddba44293a8e7ecc8780627b75)
 
 ### T-PM-01 공유 킥보드 조회가 성공처럼 보이는데 화면이 비어 있다
 - **증상**: 키 인증은 통과했는데 결과가 늘 0건이었고, 키가 막힌 경우에도 화면이 조용히 비어 있었다.
@@ -85,7 +85,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 클라이언트가 그 껍데기를 따로 판별해 실패로 올린다. 사업자 전부가 실패해야 `unavailable`, 일부만 실패하면 받은 만큼 `partial`.
 - **검증**: `tests/test_pm_vehicles.py`.
 - **교훈**: "0건"과 "실패"가 같은 모양으로 보이면 아무도 실패를 알아차리지 못한다.
-- **관련 커밋**: {{commit:f9df28f}}
+- **관련 커밋**: [`fc9f489`](https://github.com/we-meet-trip/map-project-hub/commit/fc9f4896524e4a830cd64bac970f2a6892b5bdeb)
 
 ## 보안·개인정보
 
@@ -95,7 +95,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 접두어가 붙은 이름까지 가린다. 이후 좌표는 봉투(`loc`)로만 받도록 바꿔, 쿼리에 좌표가 실리는 길 자체를 없앴다.
 - **검증**: `tests/test_logging_setup.py`, `tests/test_location_wire_required.py`.
 - **교훈**: 가리는 쪽보다 애초에 싣지 않는 쪽이 튼튼하다. 사용자의 이동 경로는 좌표 두 개만으로도 드러난다.
-- **관련 커밋**: {{commit:a65cb4b}}, {{commit:6707f1b}}, {{commit:0c00d20}}
+- **관련 커밋**: [`f846a28`](https://github.com/we-meet-trip/map-project-hub/commit/f846a28160bcfdf5c6c264297a6a076c7129d8a7), [`6e88ef7`](https://github.com/we-meet-trip/map-project-hub/commit/6e88ef7ca530f16272490390b642cee95c6c1065), [`b18f708`](https://github.com/we-meet-trip/map-project-hub/commit/b18f70864f612b5783cbb15c18485a5f7c545a84)
 
 ### T-SEC-02 내부 토큰 헤더에 비ASCII 가 오면 500 이 난다
 - **증상**: `X-Internal-Token` 에 비ASCII 문자가 들어오면 인증 실패(401·403) 대신 500 이 났다.
@@ -103,7 +103,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 양쪽을 UTF-8 바이트로 바꿔 비교하고, 값이 없거나 다르면 거절한다.
 - **검증**: `tests/test_internal_guard.py`, `tests/test_public_guard.py`.
 - **교훈**: 인증 코드의 예외 경로는 "거절"로 끝나야 한다.
-- **관련 커밋**: {{commit:b47508d}}
+- **관련 커밋**: [`39351cd`](https://github.com/we-meet-trip/map-project-hub/commit/39351cde916f36f22a16e74f23a64749adac182c)
 
 ### T-SEC-03 관리 경로가 일반 서비스 토큰으로 열린다
 - **증상**: 구독 격자 변경·금지 구역 변경·즉시 수집 같은 관리 경로를 일반 서비스 토큰으로도 부를 수 있었다.
@@ -111,7 +111,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 관리 전용 토큰(`MAP_PROJECT_HUB_ADMIN_INTERNAL_TOKEN`)을 따로 두고, 비어 있거나 일반 토큰과 같으면 관리 경로를 모두 거절한다(`internal_admin_guard`).
 - **검증**: `tests/test_internal_admin.py`, `tests/test_internal_guard.py`.
 - **교훈**: 같은 "내부" 호출이라도 권한이 다르면 자격도 나눈다.
-- **관련 커밋**: {{commit:ae9a746}}
+- **관련 커밋**: [`8932692`](https://github.com/we-meet-trip/map-project-hub/commit/8932692ba1bc3a45d0522853082c9cde1a51e0b5)
 
 ### T-SEC-04 키가 없는 공급자가 가짜 성공 데이터를 낸다
 - **증상**: 공급자 키나 경로 엔진 주소가 없을 때 그럴듯한 고정 장소·경로가 실제 응답처럼 나갈 수 있었다.
@@ -119,7 +119,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 스텁은 `HUB_PLACES_STUB_MODE=true` 로 명시할 때만 쓰고, `HUB_AUTH_ENFORCED=true` 와 함께 켜면 부팅을 거절한다. 스텁 결과와 실제 결과는 캐시 키도 나눈다(`:stub`·`:live`).
 - **검증**: `tests/test_provider_stub_isolation.py`.
 - **교훈**: 편의용 대체 동작은 기본값에서 꺼 두고 이름으로 드러나게 켠다.
-- **관련 커밋**: {{commit:1399ee1}}
+- **관련 커밋**: [`673a4fd`](https://github.com/we-meet-trip/map-project-hub/commit/673a4fd7401a0dc5bb40af9e1d4b5aa1360c1137)
 
 ## 운영
 
@@ -129,7 +129,7 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 역할을 소유자·migrator·runtime 으로 나누고, 마이그레이션은 일회성 작업으로 따로 돌린다. 서비스는 기동 때 자기 역할과 권한, 리비전 head 를 검사하고 맞지 않으면 뜨지 않는다([architecture.md](architecture.md) 5절).
 - **검증**: `tests/test_database_contract.py`, CI `database-isolation`(빈 PostGIS 에서 실제 리비전·권한 거부 검사).
 - **교훈**: 런타임 권한은 "필요한 만큼"을 넘어서 "할 수 없음"을 시험으로 고정한다.
-- **관련 커밋**: {{commit:a2aafc2}}
+- **관련 커밋**: [`73db100`](https://github.com/we-meet-trip/map-project-hub/commit/73db100cab4995e43c0aca619e7536d888924133)
 
 ### T-OPS-02 백그라운드 수집이 중간에 사라진다
 - **증상**: 부팅 직후 띄운 수집 작업이 끝나지 않고 사라지는 경우가 있었고, 기상청 429 응답의 재시도에서 예외가 났다.
@@ -137,4 +137,4 @@ hub 를 만들며 실제로 겪은 문제들이다. 항목마다 증상 / 원인
 - **해결**: 작업을 집합에 담아 끝날 때 빼고, 429 는 정해진 횟수만 재시도한다.
 - **검증**: 폴링·내부 즉시 실행 시험.
 - **교훈**: 이벤트 루프는 작업을 약하게만 참조한다. 띄운 작업은 직접 붙잡아 둔다.
-- **관련 커밋**: {{commit:89e1920}}
+- **관련 커밋**: [`455796c`](https://github.com/we-meet-trip/map-project-hub/commit/455796c28d9fd6b264c1045e0e250213111d8055)
