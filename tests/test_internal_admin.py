@@ -1,6 +1,6 @@
 """internal_admin_router (grids 토글 · forbidden_zones CRUD) 라우터 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않고,
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않고,
 새 FastAPI 에 internal_admin_router 만 include 해 라우트만 검증한다. DB 접근
 (admin_ops_repo)은 monkeypatch 로 대체한다(실 DB 불필요).
 
@@ -18,10 +18,10 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.db import admin_ops_repo
-from app.db.admin_ops_repo import GeometryError
-from app.routers.internal_admin_router import router as internal_admin_router
-from app.routers.internal_router import internal_admin_guard
+from map_project_hub.db import admin_ops_repo
+from map_project_hub.db.admin_ops_repo import GeometryError
+from map_project_hub.routers.internal_admin_router import router as internal_admin_router
+from map_project_hub.routers.internal_router import internal_admin_guard
 
 _NOW = datetime(2026, 7, 13, 0, 0, 0, tzinfo=timezone.utc)
 

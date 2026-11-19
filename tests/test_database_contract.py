@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 import pytest
 from alembic.script import ScriptDirectory
 
-from app.db import migrate
-from app.db.schema_contract import migration_config, validate_runtime_schema
+from map_project_hub.db import migrate
+from map_project_hub.db.schema_contract import migration_config, validate_runtime_schema
 
 
 class Result:

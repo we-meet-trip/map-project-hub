@@ -1,6 +1,6 @@
 """/v1/transit/routes (대중교통 통합 길찾기) 라우터·정규화·스텁 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 TestClient 로 라우트만 검증한다.
 캐시(get_place_cache)는 lifespan 미기동 상태에서 None 이라 자연히 우회된다.
 
@@ -31,15 +31,15 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.clients.hub_clients import OdsayApiError, OdsayClient
-from app.config import settings
-from app.route_stubs import transit_routes_stub
-from app.routers.hub_routers import (
+from map_project_hub.clients.hub_clients import OdsayApiError, OdsayClient
+from map_project_hub.config import settings
+from map_project_hub.route_stubs import transit_routes_stub
+from map_project_hub.routers.hub_routers import (
     _filter_routes_by_mode,
     _odsay_cache_key,
     _transit_routes_cache_key,
 )
-from app.routers.hub_routers import router as hub_router
+from map_project_hub.routers.hub_routers import router as hub_router
 
 # 서울 시청 → 여의도역. 국내 범위 안이면 값 자체는 의미가 없다.
 START = {"start_lat": 37.5665, "start_lng": 126.9780}
@@ -933,7 +933,7 @@ def _full_opt(subway_m: int, bus_m: int, modes: list[str]) -> dict:
 
 def _patch_routes(monkeypatch, routes: list[dict]) -> None:
     """조회 결과를 주어진 후보 목록으로 고정한다."""
-    from app.routers import hub_routers
+    from map_project_hub.routers import hub_routers
 
     async def fake(*_args: object) -> tuple[str, list[dict]]:
         return "ok", routes
@@ -1034,7 +1034,7 @@ class _FakeLaneClient:
 
 def _lane_env(monkeypatch, client, *, enabled=True, allowed=True):
     """실호출 분기를 타도록 고정한다(스텁 끔, 캐시 없음, 호출 상한 통과 여부)."""
-    from app.routers import hub_routers
+    from map_project_hub.routers import hub_routers
 
     async def _allowed() -> bool:
         return allowed
@@ -1059,7 +1059,7 @@ def test_lane_disabled_by_default_makes_no_call(monkeypatch):
 
 def test_lane_default_setting_is_off():
     """미완성 머지용 플래그라 기본값은 꺼짐이어야 한다(플레이북 4.2)."""
-    from app.config import Settings
+    from map_project_hub.config import Settings
 
     assert Settings.model_fields["TRANSIT_LANE_ENABLED"].default is False
 
@@ -1109,7 +1109,7 @@ def test_lane_budget_exhausted_makes_no_call(monkeypatch):
 
 def test_lane_stub_mode_makes_no_call(stub_mode, monkeypatch):
     """스텁 모드는 가짜 노선을 덧씌우지 않고 unavailable."""
-    from app.routers import hub_routers
+    from map_project_hub.routers import hub_routers
 
     fake = _FakeLaneClient(lanes=[_lane((1.0, 2.0)), _lane((3.0, 4.0))])
     monkeypatch.setattr(settings, "TRANSIT_LANE_ENABLED", True)

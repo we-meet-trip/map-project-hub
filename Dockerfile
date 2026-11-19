@@ -7,7 +7,7 @@
 #   최종 이미지에서는 컴파일러를 포함하지 않아 크기와 공격 표면이 작다.
 #
 # 실행 사용자: 비루트 사용자 `app` (uid 10001) 로 격리한다.
-# 엔트리포인트: ASGI 서버를 통해 app.main:app 을 8000 포트에 바인딩.
+# 엔트리포인트: ASGI 서버를 통해 map_project_hub.main:app 을 8000 포트에 바인딩.
 
 # 베이스 이미지의 Python 버전을 빌드 인자로 노출.
 ARG PYTHON_VERSION=3.12
@@ -51,13 +51,13 @@ RUN apt-get purge -y --allow-remove-essential perl-base \
  && test ! -e /usr/bin/perl \
  && test -z "$(find /usr/bin /usr/sbin -xdev -type f -perm /6000 -print -quit)"
 # 애플리케이션 소스. 소유자를 app:app 로 지정해 비루트 실행 환경과 정합.
-COPY --chown=app:app app ./app
+COPY --chown=app:app map_project_hub ./map_project_hub
 COPY --chown=app:app migrations ./migrations
 COPY --chown=app:app alembic.ini ./alembic.ini
 USER app
 RUN --network=none HUB_DATABASE_URL=postgresql+psycopg://build:build@127.0.0.1/build KMA_SERVICE_KEY=build python - <<'PYCODE'
 import ctypes.util
-import app.main
+import map_project_hub.main
 from shapely.geometry import Point
 from geoalchemy2.shape import from_shape, to_shape
 assert to_shape(from_shape(Point(0, 0), srid=4326)).equals(Point(0, 0))
@@ -66,9 +66,9 @@ for name in ['proj', 'tiff', 'curl', 'ssh2']:
 print('Hub import and synthetic GEOS/WKB roundtrip passed without PROJ/TIFF/curl/SSH')
 PYCODE
 EXPOSE 8000
-# /health 엔드포인트(app.main:health) 가 200 을 반환해야 healthy.
+# /health 엔드포인트(map_project_hub.main:health) 가 200 을 반환해야 healthy.
 # 표준 라이브러리만 사용해 별도 curl 등을 설치하지 않는다.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=5).status==200 else 1)"
 # ASGI 서버로 FastAPI 앱 기동. 모든 인터페이스에 바인딩.
-ENTRYPOINT ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["uvicorn", "map_project_hub.main:app", "--host", "0.0.0.0", "--port", "8000"]

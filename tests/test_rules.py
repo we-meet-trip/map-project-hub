@@ -1,6 +1,6 @@
 """룰 엔진 순수 함수 + /v1/rules/* 라우터 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 DB 없는 두 엔드포인트(mobility-radius / indoor-bonus)는 새 FastAPI 에
 rules_router 만 include 해 TestClient 로 검증한다. DB 를 참조하는
 forbidden-zones 는 rules_router 가 임포트한 zones_intersecting_polyline 을
@@ -18,10 +18,10 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-import app.routers.rules_router as rules_router_mod
-from app.db.rules_repo import _linestring_wkt
-from app.routers.rules_router import router as rules_router
-from app.rules.rule_engine import (
+import map_project_hub.routers.rules_router as rules_router_mod
+from map_project_hub.db.rules_repo import _linestring_wkt
+from map_project_hub.routers.rules_router import router as rules_router
+from map_project_hub.rules.rule_engine import (
     RADIUS_M,
     filter_by_radius,
     haversine_m,

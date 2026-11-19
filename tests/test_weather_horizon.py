@@ -14,7 +14,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from app.routers.hub_routers import (
+from map_project_hub.routers.hub_routers import (
     _aggregate_mid,
     _aggregate_short_term,
     _split_dates_by_horizon,

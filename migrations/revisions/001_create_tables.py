@@ -12,7 +12,7 @@ Revises:
 
 호출 관계:
   - migrations/env.py 가 본 모듈을 발견하고 upgrade()/downgrade() 실행
-  - app.db.forecast_repo / app.scheduler.hub_scheduler 가 본 테이블들을 사용
+  - map_project_hub.db.forecast_repo / map_project_hub.scheduler.hub_scheduler 가 본 테이블들을 사용
 """
 from __future__ import annotations
 

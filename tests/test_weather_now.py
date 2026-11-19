@@ -1,6 +1,6 @@
 """/v1/weather/now 라우터와 그 부속 로직 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 라우트만 검증하고, DB·외부
 호출은 monkeypatch 로 갈아끼운다.
 
@@ -21,11 +21,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.codes.air_codes import grade_pm10, grade_pm25, sido_name
-from app.routers import hub_routers
-from app.routers.hub_routers import _pick_air_station
-from app.routers.hub_routers import router as hub_router
-from app.utils.kma_grid import resolve_nowcast_base
+from map_project_hub.codes.air_codes import grade_pm10, grade_pm25, sido_name
+from map_project_hub.routers import hub_routers
+from map_project_hub.routers.hub_routers import _pick_air_station
+from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.utils.kma_grid import resolve_nowcast_base
 
 KST = ZoneInfo("Asia/Seoul")
 

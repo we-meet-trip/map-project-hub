@@ -14,11 +14,11 @@ from datetime import datetime
 
 import pytest
 
-from app.scheduler.hub_scheduler import (
+from map_project_hub.scheduler.hub_scheduler import (
     resolve_mid_tm_fc,
     resolve_short_term_base,
 )
-from app.utils.kma_grid import KST
+from map_project_hub.utils.kma_grid import KST
 
 
 @pytest.mark.parametrize(

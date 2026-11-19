@@ -6,11 +6,11 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from app.config import settings
-from app.crypto.location_seal import open_seal, seal
-from app.place_stubs import places_stub_active
-from app.route_stubs import routing_stub_active, transit_stub_active
-from app.routers import hub_routers
+from map_project_hub.config import settings
+from map_project_hub.crypto.location_seal import open_seal, seal
+from map_project_hub.place_stubs import places_stub_active
+from map_project_hub.route_stubs import routing_stub_active, transit_stub_active
+from map_project_hub.routers import hub_routers
 from tests.test_location_seal import KEY_B64
 
 

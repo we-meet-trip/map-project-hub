@@ -15,9 +15,9 @@ from zoneinfo import ZoneInfo
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.db.forecast_repo import RegionLookup
-from app.routers import hub_routers
-from app.routers.hub_routers import router as hub_router
+from map_project_hub.db.forecast_repo import RegionLookup
+from map_project_hub.routers import hub_routers
+from map_project_hub.routers.hub_routers import router as hub_router
 
 KST = ZoneInfo("Asia/Seoul")
 _TODAY = date(2026, 8, 5)

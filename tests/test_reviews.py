@@ -1,6 +1,6 @@
 """/v1/reviews (네이버 블로그) 라우터·정규화 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 TestClient 로 라우트만 검증한다.
 conftest 는 NAVER 자격증명을 채우지 않으므로 라우트는 스텁 경로로 동작하며,
 캐시(get_place_cache)는 lifespan 미기동 상태에서 None 이라 자연히 우회된다.
@@ -20,11 +20,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.clients.hub_clients import NaverApiError, NaverBlogClient
-from app.place_stubs import naver_blog_stub
-from app.routers.hub_routers import _naver_cache_key
-from app.routers.hub_routers import router as hub_router
-from app.schemas.hub_schemas import ReviewItem
+from map_project_hub.clients.hub_clients import NaverApiError, NaverBlogClient
+from map_project_hub.place_stubs import naver_blog_stub
+from map_project_hub.routers.hub_routers import _naver_cache_key
+from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.schemas.hub_schemas import ReviewItem
 
 
 def _client() -> TestClient:

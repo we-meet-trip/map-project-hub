@@ -9,7 +9,7 @@
 """
 from __future__ import annotations
 
-from app.db.forecast_repo import (
+from map_project_hub.db.forecast_repo import (
     SubscribedGrid,
     build_region_lookup,
     pick_serving_grid,

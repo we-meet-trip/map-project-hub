@@ -1,7 +1,7 @@
 """pytest 공용 fixture / 환경 부트스트랩.
 
 pytest 는 테스트 컬렉션 단계에서 본 모듈을 자동 임포트한다.
-본 모듈은 모든 테스트가 app.config.Settings 를 안전하게 로드할 수 있도록
+본 모듈은 모든 테스트가 map_project_hub.config.Settings 를 안전하게 로드할 수 있도록
 필수 환경변수의 기본값을 setdefault 로 주입한다(이미 정의되어 있으면 보존).
 
 호출 관계:
@@ -25,9 +25,9 @@ os.environ.setdefault("KMA_SERVICE_KEY", "test-service-key")
 # INTERNAL_SERVICE_TOKEN — internal_guard 테스트에서 헤더 일치 시나리오용.
 os.environ.setdefault("INTERNAL_SERVICE_TOKEN", "test-internal-token")
 
-# app.config 는 위 setdefault 가 모두 끝난 뒤에 임포트해야 한다. 먼저 부르면
+# map_project_hub.config 는 위 setdefault 가 모두 끝난 뒤에 임포트해야 한다. 먼저 부르면
 # Settings 가 필수 필드를 못 찾고 검증 단계에서 떨어진다.
-from app.config import settings  # noqa: E402
+from map_project_hub.config import settings  # noqa: E402
 
 
 @pytest.fixture

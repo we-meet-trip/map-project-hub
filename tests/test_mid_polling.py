@@ -9,9 +9,9 @@ import asyncio
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from app.clients.hub_clients import KMAApiError
-from app.db.forecast_repo import SubscribedGrid
-from app.scheduler import hub_scheduler
+from map_project_hub.clients.hub_clients import KMAApiError
+from map_project_hub.db.forecast_repo import SubscribedGrid
+from map_project_hub.scheduler import hub_scheduler
 
 KST = ZoneInfo("Asia/Seoul")
 

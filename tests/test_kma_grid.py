@@ -12,7 +12,7 @@ from datetime import datetime
 
 import pytest
 
-from app.utils.kma_grid import (
+from map_project_hub.utils.kma_grid import (
     KST,
     gps_to_grid,
     parse_kma_base_at,

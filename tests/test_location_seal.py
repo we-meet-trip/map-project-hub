@@ -15,8 +15,8 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from pydantic import SecretStr
 
-from app.config import settings
-from app.crypto.location_seal import SealError, is_sealed, open_seal
+from map_project_hub.config import settings
+from map_project_hub.crypto.location_seal import SealError, is_sealed, open_seal
 
 KEY_B64 = base64.b64encode(b"map-wire-test-key-0000000000000!").decode()
 KEY = base64.b64decode(KEY_B64)
@@ -62,7 +62,7 @@ def test_opens_value_sealed_by_java(monkeypatch):
     # 수명은 여기서 보지 않는다. 박아 둔 값은 만든 시각이 고정이라 그대로 두면
     # 잠시 뒤부터 형식과 무관하게 늘 거절된다. 여기서 볼 것은 두 언어가 같은
     # 형식을 쓰는지 하나뿐이고, 수명 정책은 다른 검사가 본다.
-    monkeypatch.setattr("app.crypto.location_seal.MAX_AGE_SECONDS", 10 ** 9)
+    monkeypatch.setattr("map_project_hub.crypto.location_seal.MAX_AGE_SECONDS", 10 ** 9)
     from_java = (
         "v1.VJr87jPJmpbR4MT9.t5mbqhTwLVC7Zot9wvE6tSmeHUeoCJq0ngqxodQ3NJJa"
         "vvMfjCMes25nyuFT0-eJwjxSj6FDcgfqJJIkGhuZ"
@@ -120,7 +120,7 @@ def _client():
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from app.routers.hub_routers import router as hub_router
+    from map_project_hub.routers.hub_routers import router as hub_router
 
     app = FastAPI()
     app.include_router(hub_router)
@@ -216,7 +216,7 @@ def _rules_client():
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
 
-    from app.routers.rules_router import router as rules_router
+    from map_project_hub.routers.rules_router import router as rules_router
 
     app = FastAPI()
     app.include_router(rules_router)

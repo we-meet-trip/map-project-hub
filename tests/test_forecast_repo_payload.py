@@ -15,8 +15,8 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from app.db import forecast_repo
-from app.db.forecast_repo import (
+from map_project_hub.db import forecast_repo
+from map_project_hub.db.forecast_repo import (
     _safe_int,
     upsert_mid_land,
     upsert_mid_temp,

@@ -12,8 +12,8 @@ from __future__ import annotations
 
 import pytest
 
-from app.place_stubs import kakao_category_stub
-from app.routers.hub_routers import (
+from map_project_hub.place_stubs import kakao_category_stub
+from map_project_hub.routers.hub_routers import (
     _NEARBY_CATEGORIES,
     _nearby_cache_key,
 )
@@ -59,7 +59,7 @@ class TestStub:
         assert all(p["category_group_code"] == "AD5" for p in items)
 
     def test_스텁이_공용_장소_형태를_지킨다(self):
-        from app.schemas.hub_schemas import PlaceItem
+        from map_project_hub.schemas.hub_schemas import PlaceItem
 
         for p in kakao_category_stub("CE7"):
             PlaceItem(**p)

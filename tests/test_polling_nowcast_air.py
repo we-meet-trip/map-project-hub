@@ -16,10 +16,10 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from app.clients.hub_clients import AirKoreaApiError, KMAApiError
-from app.db.forecast_repo import _parse_air_data_time
-from app.scheduler import hub_scheduler
-from app.utils.kma_grid import KST
+from map_project_hub.clients.hub_clients import AirKoreaApiError, KMAApiError
+from map_project_hub.db.forecast_repo import _parse_air_data_time
+from map_project_hub.scheduler import hub_scheduler
+from map_project_hub.utils.kma_grid import KST
 
 
 class _Grid:
@@ -248,7 +248,7 @@ def test_nowcast_poll_minute_is_after_publication():
     공식 2607 가이드의 발급처는 매시 :10 이후 그 시각 관측을 내놓는다. 그 전에 물으면 한 시간
     전 관측이 돌아온다(resolve_nowcast_base 가 물러선다).
     """
-    from app.scheduler.hub_scheduler import build_scheduler
+    from map_project_hub.scheduler.hub_scheduler import build_scheduler
 
     job = build_scheduler().get_job("kma_nowcast")
     minute = str(job.trigger.fields[job.trigger.FIELD_NAMES.index("minute")])
@@ -264,9 +264,9 @@ def test_stored_nowcast_stays_fresh_until_next_poll():
     기온이 사라졌다 돌아오기를 반복한다. 사용자에게는 앱이 고장 난 것으로
     보인다.
     """
-    from app.scheduler.hub_scheduler import build_scheduler
-    from app.config import settings
-    from app.utils.kma_grid import resolve_nowcast_base
+    from map_project_hub.scheduler.hub_scheduler import build_scheduler
+    from map_project_hub.config import settings
+    from map_project_hub.utils.kma_grid import resolve_nowcast_base
 
     job = build_scheduler().get_job("kma_nowcast")
     poll_minute = int(

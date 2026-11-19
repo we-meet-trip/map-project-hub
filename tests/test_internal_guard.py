@@ -16,8 +16,8 @@ import asyncio
 import pytest
 from fastapi import HTTPException
 
-from app.config import settings
-from app.routers.internal_router import _is_trusted, internal_guard, internal_admin_guard
+from map_project_hub.config import settings
+from map_project_hub.routers.internal_router import _is_trusted, internal_guard, internal_admin_guard
 from pydantic import SecretStr
 
 
@@ -113,7 +113,7 @@ def test_management_requires_distinct_token_and_trusted_network(monkeypatch, con
 
 
 def test_management_router_dependencies_use_management_guard():
-    from app.routers import internal_router, internal_admin_router
+    from map_project_hub.routers import internal_router, internal_admin_router
     for router in (internal_router.router, internal_admin_router.router):
         for route in router.routes:
             assert internal_admin_guard in [dependency.call for dependency in route.dependant.dependencies]

@@ -1,6 +1,6 @@
 """/v1/transit/subway (ODsay 지하철 경로) 라우터·클라이언트 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 TestClient 로 라우트만 검증한다.
 캐시(get_place_cache)는 lifespan 미기동 상태에서 None 이라 자연히 우회된다.
 스텁 경로를 타는 테스트는 conftest 의 stub_mode 픽스처로 고정한다 — Settings 가
@@ -33,17 +33,17 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from app.clients.hub_clients import OdsayApiError, OdsayClient
-from app.config import settings
-from app.route_stubs import subway_route_stub
-from app.routers import hub_routers
-from app.routers.hub_routers import (
+from map_project_hub.clients.hub_clients import OdsayApiError, OdsayClient
+from map_project_hub.config import settings
+from map_project_hub.route_stubs import subway_route_stub
+from map_project_hub.routers import hub_routers
+from map_project_hub.routers.hub_routers import (
     _odsay_budget_key,
     _odsay_cache_key,
     _odsay_is_key_failure,
 )
-from app.routers.hub_routers import router as hub_router
-from app.schemas.hub_schemas import SubwayRoute
+from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.schemas.hub_schemas import SubwayRoute
 
 _KST = ZoneInfo("Asia/Seoul")
 

@@ -13,22 +13,22 @@ import asyncio
 
 import pytest
 
-from app.clients.hub_clients import (
+from map_project_hub.clients.hub_clients import (
     DurunubiApiError,
     DurunubiClient,
     KakaoLocalClient,
     _redact_service_key,
 )
-from app.place_stubs import durunubi_course_stub, kakao_keyword_stub
-from app.routers.hub_routers import _brd_div_for_mobility
-from app.schemas.hub_schemas import PlaceItem
-from app.scheduler import places_sync
-from app.scheduler.places_sync import (
+from map_project_hub.place_stubs import durunubi_course_stub, kakao_keyword_stub
+from map_project_hub.routers.hub_routers import _brd_div_for_mobility
+from map_project_hub.schemas.hub_schemas import PlaceItem
+from map_project_hub.scheduler import places_sync
+from map_project_hub.scheduler.places_sync import (
     _course_category,
     _to_float,
     _to_int,
 )
-from app.utils.gpx import parse_points, summarize
+from map_project_hub.utils.gpx import parse_points, summarize
 
 
 def test_kakao_normalize_swaps_xy_to_latlng():

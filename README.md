@@ -17,7 +17,7 @@ MAP 서비스의 외부 데이터 게이트웨이. FastAPI + PostGIS + APSchedul
 map-service-hub/
 ├── Dockerfile                    Python 3.12-slim + libgeos/libproj
 ├── requirements.txt              핵심 의존성 (fastapi · sqlalchemy[asyncio] · geoalchemy2 · alembic · apscheduler 등)
-└── app/
+└── map_project_hub/
     ├── __init__.py
     ├── main.py                   FastAPI 진입점 + /health
     ├── routers/hub_routers.py    /v1/places · /v1/places/photos · /v1/weather
@@ -241,7 +241,7 @@ curl http://127.0.0.1:8001/health
 
 ## 룰 엔진 (`POST /v1/rules/*`)
 
-외부 호출 없이 결정적으로 계산 가능한 규칙 3종. 좌표/점수 계산은 순수 함수(`app/rules/rule_engine.py`), 금지구역 교차는 PostGIS(`hub_data.forbidden_zones`)가 담당한다.
+외부 호출 없이 결정적으로 계산 가능한 규칙 3종. 좌표/점수 계산은 순수 함수(`map_project_hub/rules/rule_engine.py`), 금지구역 교차는 PostGIS(`hub_data.forbidden_zones`)가 담당한다.
 
 - `POST /v1/rules/filter/mobility-radius` — 출발지 기준 이동수단 반경 필터.
   - 본문: `{origin:{lat,lng}, mobility, candidates:[{lat,lng,...}]}` (candidates ≤ 100)

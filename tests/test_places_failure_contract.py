@@ -3,8 +3,8 @@ import asyncio
 import pytest
 from fastapi import HTTPException
 
-from app.clients.hub_clients import KakaoApiError
-from app.routers import hub_routers as routes
+from map_project_hub.clients.hub_clients import KakaoApiError
+from map_project_hub.routers import hub_routers as routes
 
 
 @pytest.mark.parametrize("code,retryable", [("HTTP_403", False), ("UNAVAILABLE", False), ("HTTP_503", True)])

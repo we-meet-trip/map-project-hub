@@ -24,7 +24,7 @@ import logging
 
 import pytest
 
-from app.main import _CoordinateRedactingFilter, _configure_logging
+from map_project_hub.main import _CoordinateRedactingFilter, _configure_logging
 
 
 @contextlib.contextmanager
@@ -73,7 +73,7 @@ def test_attached_handler_redacts_coordinates():
         handler = root.handlers[0]
 
         record = logging.LogRecord(
-            name="app.test",
+            name="map_project_hub.test",
             level=logging.INFO,
             pathname=__file__,
             lineno=1,
@@ -208,7 +208,7 @@ def test_ordinary_record_keeps_lazy_formatting():
     보는 처리기가 있으면 그 값도 함께 잃는다.
     """
     record = logging.LogRecord(
-        name="app.test",
+        name="map_project_hub.test",
         level=logging.INFO,
         pathname=__file__,
         lineno=1,

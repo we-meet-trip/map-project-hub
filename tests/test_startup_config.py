@@ -24,7 +24,7 @@ def test_offline_migrations_accept_percent_encoded_password(monkeypatch):
 
 
 def test_startup_does_not_create_unconfigured_external_clients(monkeypatch):
-    import app.main as main
+    import map_project_hub.main as main
 
     settings = main.settings
     for name in (

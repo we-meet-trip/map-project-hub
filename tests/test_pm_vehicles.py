@@ -1,6 +1,6 @@
 """/v1/mobility/pm-vehicles (공유 킥보드) 라우터·클라이언트 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 TestClient 로 라우트만 검증한다.
 conftest 가 KMA_SERVICE_KEY 를 채우므로 전용 키가 비어 있어도 실호출 분기를
 타는 점에 주의한다 — 스텁을 보려면 두 키를 함께 비워야 한다.
@@ -27,14 +27,14 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from app.clients.hub_clients import PmApiError, PmClient
-from app.config import settings
-from app.place_stubs import pm_vehicle_stub
-from app.routers import hub_routers
-from app.routers.hub_routers import _pm_cache_key, _pm_providers
-from app.routers.hub_routers import router as hub_router
-from app.rules.rule_engine import haversine_m
-from app.schemas.hub_schemas import PmVehicle
+from map_project_hub.clients.hub_clients import PmApiError, PmClient
+from map_project_hub.config import settings
+from map_project_hub.place_stubs import pm_vehicle_stub
+from map_project_hub.routers import hub_routers
+from map_project_hub.routers.hub_routers import _pm_cache_key, _pm_providers
+from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.rules.rule_engine import haversine_m
+from map_project_hub.schemas.hub_schemas import PmVehicle
 
 # 서울 시청.
 _LAT = 37.5665

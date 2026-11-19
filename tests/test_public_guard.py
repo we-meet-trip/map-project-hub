@@ -15,8 +15,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.config import settings
-from app.routers.rules_router import router as rules_router
+from map_project_hub.config import settings
+from map_project_hub.routers.rules_router import router as rules_router
 
 _PATH = "/v1/rules/score/indoor-bonus"
 _BODY = {
@@ -77,7 +77,7 @@ def test_public_guard_non_ascii_token_is_401_not_typeerror(monkeypatch):
 
     from fastapi import HTTPException
 
-    from app.routers.guards import public_guard
+    from map_project_hub.routers.guards import public_guard
 
     class _FakeReq:
         def __init__(self, token: str) -> None:

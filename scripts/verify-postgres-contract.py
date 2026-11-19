@@ -57,9 +57,9 @@ async def worker(service, source, dsn):
     if service == 'hub':
         os.environ['KMA_SERVICE_KEY'] = 'fixture-unused'
         os.environ['HUB_DATABASE_URL'] = dsn.replace('postgresql://', 'postgresql+psycopg://')
-        from app.db.hub_db import get_hub_db, dispose_hub_db
-        from app.db.schema_contract import validate_runtime_schema
-        from app.db import forecast_repo, admin_ops_repo
+        from map_project_hub.db.hub_db import get_hub_db, dispose_hub_db
+        from map_project_hub.db.schema_contract import validate_runtime_schema
+        from map_project_hub.db import forecast_repo, admin_ops_repo
         try:
             PHASE = "hub_schema_guard"
             await validate_runtime_schema(get_hub_db())
@@ -164,7 +164,7 @@ def main():
             from sqlalchemy.engine import URL
             uri = URL.create('postgresql+psycopg' if sqlalchemy else 'postgresql',username=role,password=passwords[role],host=cfg['host'],port=int(cfg.get('port',5432)),database=cfg['dbname'],query={'options':'-c role='+owner} if owner else {})
             return uri.render_as_string(hide_password=False)
-        for service, module, key, role in [('hub','app.db.migrate','HUB_MIGRATION_DATABASE_URL','map_hub_migrator'),('agent','app.checkpoint_migrate','AGENT_CHECKPOINT_MIGRATION_DSN','map_agent_migrator'),('admin','alembic','ADMIN_DATABASE_URL','map_admin_migrator')]:
+        for service, module, key, role in [('hub','map_project_hub.db.migrate','HUB_MIGRATION_DATABASE_URL','map_hub_migrator'),('agent','app.checkpoint_migrate','AGENT_CHECKPOINT_MIGRATION_DSN','map_agent_migrator'),('admin','alembic','ADMIN_DATABASE_URL','map_admin_migrator')]:
             child=base_env();child[key]=role_dsn(role,service!='agent','map_admin' if service=='admin' else None)
             command=[getattr(args,service+'_python'),'-m',module]+(['upgrade','head'] if service=='admin' else [])
             if service == 'hub':

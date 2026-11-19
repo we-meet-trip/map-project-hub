@@ -4,7 +4,7 @@
 키를 설치 파일에서 빼는 것이므로, 이 경로가 죽으면 앱은 주소 검색을 아예
 못 한다 — 되돌아가 앱에서 직접 부르는 선택지는 없다.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 새 FastAPI 에 hub_router 만 실어 라우트만 본다.
 
 다루는 범위:
@@ -21,10 +21,10 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from app.clients.hub_clients import KakaoApiError, KakaoLocalClient
-from app.config import settings
-from app.routers.hub_routers import _kakao_address_cache_key, _kakao_cache_key
-from app.routers.hub_routers import router as hub_router
+from map_project_hub.clients.hub_clients import KakaoApiError, KakaoLocalClient
+from map_project_hub.config import settings
+from map_project_hub.routers.hub_routers import _kakao_address_cache_key, _kakao_cache_key
+from map_project_hub.routers.hub_routers import router as hub_router
 
 
 def _client() -> TestClient:
@@ -102,7 +102,7 @@ def test_kakao_failure_becomes_empty_list(monkeypatch, real_key):
             raise KakaoApiError("HTTP_500", "boom")
 
     monkeypatch.setattr(
-        "app.routers.hub_routers.get_kakao_client", lambda: Boom()
+        "map_project_hub.routers.hub_routers.get_kakao_client", lambda: Boom()
     )
     r = _client().get("/v1/places/address", params={"query": "역삼"})
     assert r.status_code == 200

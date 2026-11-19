@@ -7,10 +7,10 @@ import ssl
 import httpx
 import pytest
 
-from app.clients.hub_clients import KMAApiError, KMAClient, _transport_code
-from app.routers.hub_routers import _coerce_int
-from app.rules.rule_engine import indoor_bonus
-from app.scheduler import hub_scheduler
+from map_project_hub.clients.hub_clients import KMAApiError, KMAClient, _transport_code
+from map_project_hub.routers.hub_routers import _coerce_int
+from map_project_hub.rules.rule_engine import indoor_bonus
+from map_project_hub.scheduler import hub_scheduler
 from tests.test_weather_route import _TODAY, KST, _stub, _get, _full_day, _region
 
 
@@ -196,7 +196,7 @@ def test_missing_precipitation_preserves_base_score():
     (100, 10, [[127, 37], [127, 91]]),
 ])
 def test_osrm_rejects_invalid_route_without_raw_payload(distance, duration, coords):
-    from app.clients.hub_clients import OsrmClient, OsrmApiError
+    from map_project_hub.clients.hub_clients import OsrmClient, OsrmApiError
     with pytest.raises(OsrmApiError) as result:
         OsrmClient._normalize_route({'code': 'Ok', 'routes': [{
             'distance': distance, 'duration': duration,
@@ -208,7 +208,7 @@ def test_osrm_rejects_invalid_route_without_raw_payload(distance, duration, coor
 
 @pytest.mark.asyncio
 async def test_osrm_failure_never_echoes_location_or_upstream_message(monkeypatch):
-    from app.clients.hub_clients import OsrmClient, OsrmApiError
+    from map_project_hub.clients.hub_clients import OsrmClient, OsrmApiError
     async with OsrmClient('http://osrm-foot:5000') as client:
         async def fail(*_a, **_k):
             raise httpx.ReadTimeout('raw-private-coordinates')
@@ -234,13 +234,13 @@ def test_partial_overlap_keeps_real_pop_without_invented_daily_temperatures(monk
 
 @pytest.mark.parametrize('value', [True, float('inf'), '-999', '999'])
 def test_mid_missing_sentinels_are_not_persisted_as_values(value):
-    from app.db.forecast_repo import _safe_int
+    from map_project_hub.db.forecast_repo import _safe_int
     assert _safe_int(value) is None
 
 
 @pytest.mark.asyncio
 async def test_air_http_failure_has_no_raw_provider_content(monkeypatch):
-    from app.clients.hub_clients import AirKoreaClient, AirKoreaApiError
+    from map_project_hub.clients.hub_clients import AirKoreaClient, AirKoreaApiError
     async with AirKoreaClient('fake') as client:
         async def fail(*_a, **_k):
             return httpx.Response(403, text='TOP_SECRET raw provider content')

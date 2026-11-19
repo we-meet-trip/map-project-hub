@@ -1,6 +1,6 @@
 """/v1/directions/batch (OSRM 경로) 라우터·정규화·단순화 테스트.
 
-app.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
+map_project_hub.main.app 은 lifespan 이 스케줄러/DB 를 기동하므로 임포트하지 않는다.
 대신 새 FastAPI 에 hub_router 만 include 해 TestClient 로 라우트만 검증한다.
 conftest 는 OSRM base URL 을 채우지 않으므로 라우트는 스텁 경로로 동작하며,
 캐시(get_place_cache)는 lifespan 미기동 상태에서 None 이라 자연히 우회된다.
@@ -22,11 +22,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.clients.hub_clients import OsrmApiError, OsrmClient
-from app.routers.hub_routers import _route_cache_key
-from app.routers.hub_routers import router as hub_router
-from app.schemas.hub_schemas import DirectionsLeg
-from app.utils.polyline_simplify import simplify
+from map_project_hub.clients.hub_clients import OsrmApiError, OsrmClient
+from map_project_hub.routers.hub_routers import _route_cache_key
+from map_project_hub.routers.hub_routers import router as hub_router
+from map_project_hub.schemas.hub_schemas import DirectionsLeg
+from map_project_hub.utils.polyline_simplify import simplify
 
 
 def _client() -> TestClient:
@@ -294,7 +294,7 @@ def test_simplify_short_input_unchanged():
 
 
 def test_cache_changes_with_graph_timestamp_and_artifact(monkeypatch):
-    from app.config import settings
+    from map_project_hub.config import settings
     leg = DirectionsLeg(**_leg())
     monkeypatch.setattr(settings, 'OSRM_DATA_VERSION', '2026-09-05T20:22:06Z')
     original = _route_cache_key('walk', leg)
@@ -314,8 +314,8 @@ def test_normalization_preserves_provider_graph_version():
 @pytest.mark.asyncio
 async def test_mismatched_graph_version_is_not_served_or_cached(monkeypatch):
     from unittest.mock import AsyncMock
-    from app.config import settings
-    from app.routers import hub_routers
+    from map_project_hub.config import settings
+    from map_project_hub.routers import hub_routers
     monkeypatch.setattr(settings, 'OSRM_DATA_VERSION', '2026-09-05T20:22:06Z')
     cache = AsyncMock()
     cache.get_json.return_value = None
@@ -330,8 +330,8 @@ async def test_mismatched_graph_version_is_not_served_or_cached(monkeypatch):
 @pytest.mark.asyncio
 async def test_mismatched_cached_graph_is_refetched(monkeypatch):
     from unittest.mock import AsyncMock
-    from app.config import settings
-    from app.routers import hub_routers
+    from map_project_hub.config import settings
+    from map_project_hub.routers import hub_routers
     version = '2026-09-05T20:22:06Z'
     monkeypatch.setattr(settings, 'OSRM_DATA_VERSION', version)
     cache = AsyncMock()

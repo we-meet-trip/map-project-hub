@@ -13,7 +13,7 @@ from unittest.mock import AsyncMock
 import pytest
 from fastapi.testclient import TestClient
 
-import app.main as main
+import map_project_hub.main as main
 
 
 class _FakeCache:
