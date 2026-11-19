@@ -36,7 +36,6 @@
 
 Revision ID: 0007_fix_mid_land_reg_ids
 Revises: 0006_weather_nowcast_snap
-Create Date: 2026-08-04
 
 호출 관계:
   - alembic upgrade head 가 0006 다음으로 본 리비전을 적용한다.

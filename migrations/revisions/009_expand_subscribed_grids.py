@@ -26,7 +26,6 @@
 
 Revision ID: 0009_expand_subscribed_grids
 Revises: 0008_fix_shifted_region_rows
-Create Date: 2026-08-05
 
 호출 관계:
   - alembic upgrade head 가 0008 다음으로 본 리비전을 적용한다.

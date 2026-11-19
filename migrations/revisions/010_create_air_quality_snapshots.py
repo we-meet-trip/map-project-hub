@@ -3,7 +3,6 @@
 
 Revision ID: 0010_air_quality_snap
 Revises: 0009_expand_subscribed_grids
-Create Date: 2026-08-11
 
 대기오염 측정값을 시각별로 남긴다. 지금까지는 요청이 올 때마다 발급처를
 불러 짧게 캐시만 했는데, 그러면 발급처가 멈춰 있는 동안 화면에서 미세먼지가

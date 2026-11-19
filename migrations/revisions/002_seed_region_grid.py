@@ -2,7 +2,6 @@
 
 Revision ID: 0002_seed_region_grid
 Revises: 0001_init_hub_data
-Create Date: 2026-05-23
 
 본 revision 은 0001 이 생성한 hub_data.region_grid 테이블에 행정구역 시드를
 적재한다. 적재할 INSERT 문은 데이터 양이 크기 때문에 Python 코드에 직접

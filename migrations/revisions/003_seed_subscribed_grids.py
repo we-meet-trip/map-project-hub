@@ -3,7 +3,6 @@
 
 Revision ID: 0003_seed_subscribed_grids
 Revises: 0002_seed_region_grid
-Create Date: 2026-05-23
 
 KMA 폴링 대상 격자(서울/광역시도 18건)를 hub_data.subscribed_grids 에
 시드로 적재한다. 각 row 의 admin_code 는 0002 가 적재한 region_grid 의

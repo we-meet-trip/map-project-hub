@@ -30,7 +30,6 @@
 
 Revision ID: 0008_fix_shifted_region_rows
 Revises: 0007_fix_mid_land_reg_ids
-Create Date: 2026-08-05
 
 호출 관계:
   - alembic upgrade head 가 0007 다음으로 본 리비전을 적용한다.

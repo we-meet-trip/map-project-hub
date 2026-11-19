@@ -3,7 +3,6 @@
 
 Revision ID: 0006_weather_nowcast_snap
 Revises: 0005_create_forbidden_zones
-Create Date: 2026-08-01
 
 시각별 실황 기온을 격자 단위로 남겨, "어제 같은 시간대와 비교" 문구를
 만들 수 있게 한다. 실황 API 는 현재 시각만 돌려주고 과거를 조회할 수단이

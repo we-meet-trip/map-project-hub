@@ -2,7 +2,6 @@
 
 Revision ID: 0001_init_hub_data
 Revises:
-Create Date: 2026-05-23
 
 본 revision 은 hub_data 스키마의 기저 테이블 5종을 한꺼번에 만든다:
   region_grid           — 행정구역 ↔ KMA 격자 매핑 (시드는 0002)

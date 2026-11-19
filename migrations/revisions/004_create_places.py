@@ -3,7 +3,6 @@
 
 Revision ID: 0004_create_places
 Revises: 0003_seed_subscribed_grids
-Create Date: 2026-06-27
 
 장소 후보를 영속 저장하는 hub_data.places 테이블을 만든다. 두 종류의
 출처를 한 테이블에 담으며 source 컬럼으로 구분한다:

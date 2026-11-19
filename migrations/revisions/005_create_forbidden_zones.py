@@ -3,7 +3,6 @@
 
 Revision ID: 0005_create_forbidden_zones
 Revises: 0004_create_places
-Create Date: 2026-07-07
 
 경로가 지나가면 안 되는 금지구역(면)을 영속 저장하는
 hub_data.forbidden_zones 테이블을 만든다. 룰 엔진의 금지구역 교차 판정
