@@ -1,14 +1,14 @@
 # 다이어그램 근거표
 
-그림의 노드와 엣지마다 근거를 적는다. 교차 검토는 이 표로 한다. 다른 레포 근거는 그 레포 안의 경로로 적는다.
+그림의 노드와 엣지마다 근거를 적는다. 교차 검토는 이 표로 한다. 이 레포 근거는 file:line 으로, 다른 레포 근거는 줄 번호가 바뀌어도 찾을 수 있게 파일과 기호(클래스·함수)로 적는다.
 
 ## gateway (hub 게이트웨이 구성)
 
 | 그림 | 요소 | 주장 | 근거 file:line | 확인 방법 |
 |---|---|---|---|---|
-| gateway | 노드 map-project-user (BFF) | 앱 요청을 받아 hub 공개 경로를 부른다 | map-project-user `src/main/java/map/project/user/weather/HubWeatherNowClient.java:12` | user 의 hub 클라이언트에서 `/v1/` 경로 검색 |
-| gateway | 노드 map-project-agent (추천) | 추천 중에 hub 의 날씨·장소·후기·규칙 경로를 부른다 | map-project-agent `map_project_agent/clients/agent_clients.py:214`, `map_project_agent/agent_settings.py:94` | agent 의 hub 클라이언트 읽기 |
-| gateway | 노드 map-project-admin (운영 콘솔) | `/internal/*` 로 hub 쓰기를 맡긴다 | map-project-admin `map_project_admin/hub_client.py:25,31` | admin hub 클라이언트 읽기 |
+| gateway | 노드 map-project-user (BFF) | 앱 요청을 받아 hub 공개 경로를 부른다 | map-project-user `HubWeatherNowClient`(`src/main/java/map/project/user/weather/HubWeatherNowClient.java`) | user 의 hub 클라이언트에서 `/v1/` 경로 검색 |
+| gateway | 노드 map-project-agent (추천) | 추천 중에 hub 의 날씨·장소·후기·규칙 경로를 부른다 | map-project-agent `HubClient`(`map_project_agent/clients/agent_clients.py`), agent `docs/contracts.md` 'hub 로 보내는 요청' | agent 의 hub 클라이언트 읽기 |
+| gateway | 노드 map-project-admin (운영 콘솔) | `/internal/*` 로 hub 쓰기를 맡긴다 | map-project-admin `toggle_grid`·`list_forbidden_zones` 등(`map_project_admin/hub_client.py`) | admin hub 클라이언트 읽기 |
 | gateway | 노드 /v1/* 공개 경로 | 날씨·장소·후기·사진·경로·대중교통·이동수단 조회 | `map_project_hub/routers/hub_routers.py:502,804` 외 `@router` 선언들 | `app.routes` 목록 출력 |
 | gateway | 노드 /v1/rules/* | 반경·실내 가점·금지 구역·체류 | `map_project_hub/routers/rules_router.py:57,93,111,142` | 같은 파일 |
 | gateway | 노드 /internal/* | 즉시 수집·구독 격자·금지 구역, 관리 전용 토큰 가드 | `map_project_hub/routers/internal_router.py:71-77,124`, `map_project_hub/routers/internal_admin_router.py:39` | `tests/test_internal_admin.py` |
@@ -20,9 +20,9 @@
 | gateway | 노드 OSRM | 직접 띄운 인스턴스, 주소가 비면 부르지 않음 | `map_project_hub/clients/hub_clients.py:1329`, `map_project_hub/config.py`(`OSRM_FOOT_BASE_URL` 기본 빈 값) | `.env.example` |
 | gateway | 노드 공공 API (키가 있을 때만) | 기상청·에어코리아·두루누비·국토교통부·서울 따릉이 | `map_project_hub/clients/hub_clients.py:355,497,814,1972,2121`, `map_project_hub/scheduler/key_guard.py:23` | `tests/test_missing_provider_keys.py` |
 | gateway | 엣지 user → /v1/* (loc 봉투) | 좌표는 봉투로만 받는다 | `map_project_hub/routers/location_params.py:62` | `tests/test_location_wire_required.py` |
-| gateway | 엣지 user → 노선 좌표 조회 | user 가 `/v1/transit/routes/lane` 을 부른다 | map-project-user `src/main/java/map/project/user/transit/TransitRouteClient.java:77` | user 코드 |
-| gateway | 엣지 agent → /v1/* (날씨·장소·후기) | agent 가 날씨·장소·후기를 조회한다 | map-project-agent `map_project_agent/agent_settings.py:94` | agent 코드에서 `/v1/` 검색 |
-| gateway | 엣지 agent → /v1/rules/* (loc 봉투) | 반경 필터 본문은 `{mobility, loc}` | map-project-agent `map_project_agent/clients/agent_clients.py:214`, hub `map_project_hub/routers/location_params.py`(`resolve_origin_and_candidates`) | `tests/test_rules.py` |
+| gateway | 엣지 user → 노선 좌표 조회 | user 가 `/v1/transit/routes/lane` 을 부른다 | map-project-user `TransitRouteClient`(`src/main/java/map/project/user/transit/TransitRouteClient.java`) | user 코드 |
+| gateway | 엣지 agent → /v1/* (날씨·장소·후기) | agent 가 날씨·장소·후기를 조회한다 | map-project-agent `HubClient.fetch_weather`·`search_places`·`fetch_reviews`(`map_project_agent/clients/agent_clients.py`) | agent 의 hub 클라이언트 읽기 |
+| gateway | 엣지 agent → /v1/rules/* (loc 봉투) | 반경 필터 본문은 `{mobility, loc}` | map-project-agent `HubClient.filter_mobility_radius`(`map_project_agent/clients/agent_clients.py`, 100개씩 나눠 보냄), hub `map_project_hub/routers/location_params.py`(`resolve_origin_and_candidates`, 후보 100 상한) | `tests/test_rules.py` |
 | gateway | 엣지 admin → /internal/* (관리 전용 토큰) | 일반 토큰으로는 거절된다 | `map_project_hub/routers/internal_router.py:71-77` | `tests/test_internal_admin.py` |
 | gateway | 엣지 /v1/* → Redis | 공급자 응답을 키별 TTL 로 캐시 | `map_project_hub/routers/hub_routers.py:973,1011` | 캐시 키 시험 |
 | gateway | 엣지 /v1/* → 민간 API | 키가 있는 공급자만 부른다 | `map_project_hub/routers/hub_routers.py`(각 경로의 `get_*_client() is None` 분기) | `tests/test_provider_stub_isolation.py` |
