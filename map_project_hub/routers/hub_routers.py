@@ -1014,7 +1014,14 @@ async def _kakao_places(
 
     secret = settings.KAKAO_REST_API_KEY.get_secret_value()
     if places_stub_active(secret):
-        results = kakao_keyword_stub(query)
+        # 지역 대표 좌표 주변에 스텁을 놓아, 키 없이도 도보 반경 필터를 통과하는
+        # 후보가 나오게 한다. 좌표를 못 찾으면 고정 스텁을 쓴다.
+        try:
+            center = await lookup_region_centroid(province, city)
+        except Exception as e:  # noqa: BLE001 - 스텁 배치일 뿐이라 실패해도 고정값으로 간다
+            logger.warning("stub centroid lookup failed err=%s", type(e).__name__)
+            center = None
+        results = kakao_keyword_stub(query, center, f"{province} {city}".strip())
     else:
         client = get_kakao_client()
         if client is None:

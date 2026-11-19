@@ -171,6 +171,26 @@ def test_stub_shapes_valid():
         assert course_keys.issubset(c.keys())
 
 
+def test_keyword_stub_around_center_stays_within_walking_radius():
+    """지역 중심이 있으면 스텁 네 곳이 그 주변에 모여, 평균 중심 도보 반경을 모두 통과한다."""
+    from map_project_hub.rules.rule_engine import filter_by_radius
+
+    center = (37.5704, 126.9816)
+    stubs = kakao_keyword_stub("q", center, "서울특별시 종로구")
+    assert len(stubs) == 4 and len({s["content_id"] for s in stubs}) == 4
+    for s in stubs:
+        PlaceItem(**s)
+        assert ":stub-" in s["content_id"] and s["address"] == "서울특별시 종로구 (스텁)"
+    origin = (sum(s["lat"] for s in stubs) / 4, sum(s["lng"] for s in stubs) / 4)
+    filtered, radius = filter_by_radius(origin, "walk", stubs)
+    assert radius == 3000 and len(filtered) == 4
+
+
+def test_keyword_stub_without_center_is_fixed():
+    """중심을 모르면 예전 고정 스텁을 그대로 쓴다."""
+    assert [s["content_id"] for s in kakao_keyword_stub("q")] == ["kakao:stub-1", "kakao:stub-2"]
+
+
 def test_normalize_docs_skips_missing_or_bad_xy():
     """좌표가 없거나 깨진 카카오 문서는 정규화에서 제외된다."""
     docs = [

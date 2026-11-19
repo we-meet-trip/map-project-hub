@@ -30,7 +30,7 @@ map-project-hub 는 MAP 의 외부 데이터 게이트웨이다. 관광·날씨�
 | `map_project_hub/clients/hub_clients.py` | 외부 API 어댑터(기상청·에어코리아·카카오·네이버·Google·ODsay·서울 따릉이·국토교통부 PM·두루누비·OSRM) |
 | `map_project_hub/scheduler/` | 예보·실황·대기 폴링, 신선도 감시, 하우스키핑, 코스 동기화, 키 확인(`key_guard.py`) |
 | `map_project_hub/db/` | 저장소 접근, 마이그레이션 일회성 실행(`migrate.py`), 기동 시 DB 계약 검사(`schema_contract.py`) |
-| `map_project_hub/place_stubs.py`, `route_stubs.py` | 명시 스텁 모드(`HUB_PLACES_STUB_MODE=true`)에서 쓰는 고정 응답 |
+| `map_project_hub/place_stubs.py`, `route_stubs.py` | 명시 스텁 모드(`HUB_PLACES_STUB_MODE=true`)에서 쓰는 고정 응답. 지역 장소 검색 스텁은 요청 지역의 대표 좌표 주변 수백 m 안에 네 곳을 놓아, 키 없이도 도보 추천이 반경 필터를 통과한다 |
 | `migrations/` | Alembic 리비전(선형 0001~0010)과 행정구역 격자 시드 |
 
 ## 3. 기동 순서와 기동 검사

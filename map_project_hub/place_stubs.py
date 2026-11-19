@@ -51,9 +51,48 @@ _KAKAO_STUB: list[dict] = [
 ]
 
 
-def kakao_keyword_stub(query: str) -> list[dict]:
-    """카카오 키워드 검색 스텁 응답을 돌려준다(질의와 무관한 고정값)."""
-    return [dict(p) for p in _KAKAO_STUB]
+# 지역 중심 주변에 놓는 키워드 검색 스텁 — (이름, 분류, 분류 코드, 위도 차, 경도 차).
+# 차이는 수백 m 안이라, 후보들의 평균을 중심으로 도보 반경(3km) 필터를 걸어도
+# 모두 남는다. 고정 좌표 두 곳만 주면 지역마다 서로 멀어 도보 추천이 비었다.
+_KAKAO_STUB_AROUND: tuple[tuple[str, str, str, float, float], ...] = (
+    ("스텁 카페", "음식점 > 카페", "CE7", 0.0018, 0.0012),
+    ("스텁 전망대", "관광,명소 > 전망대", "AT4", -0.0015, 0.0020),
+    ("스텁 식당", "음식점 > 한식", "FD6", 0.0010, -0.0022),
+    ("스텁 미술관", "문화시설 > 미술관", "CT1", -0.0020, -0.0010),
+)
+
+
+def kakao_keyword_stub(
+    query: str,
+    center: tuple[float, float] | None = None,
+    area: str = "",
+) -> list[dict]:
+    """카카오 키워드 검색 스텁 응답을 돌려준다(질의와 무관).
+
+    center(지역 대표 좌표)가 있으면 그 주변 수백 m 안에 장소 네 곳을 놓는다.
+    없으면 고정 좌표 두 곳을 돌려준다.
+    """
+    if center is None:
+        return [dict(p) for p in _KAKAO_STUB]
+    lat0, lng0 = center
+    label = f"{area} (스텁)".strip() if area else "스텁 주소"
+    return [
+        {
+            "content_id": f"kakao:stub-{i}",
+            "source": "kakao",
+            "name": name,
+            "address": label,
+            "road_address": label,
+            "lat": round(lat0 + dlat, 7),
+            "lng": round(lng0 + dlng, 7),
+            "category": category,
+            "category_group_code": code,
+            "phone": None,
+            "place_url": None,
+            "distance_m": None,
+        }
+        for i, (name, category, code, dlat, dlng) in enumerate(_KAKAO_STUB_AROUND, 1)
+    ]
 
 
 # 카카오 주소 검색 스텁 — 주소 문자열만 담는다(좌표 없음).
