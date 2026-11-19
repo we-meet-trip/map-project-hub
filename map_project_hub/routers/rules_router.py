@@ -22,7 +22,10 @@ from fastapi import Request, APIRouter, Depends, HTTPException, status
 
 from map_project_hub.db.rules_repo import zones_intersecting_polyline
 from map_project_hub.routers.guards import public_guard
-from map_project_hub.routers.location_params import resolve_origin_and_candidates
+from map_project_hub.routers.location_params import (
+    resolve_origin_and_candidates,
+    resolve_polyline,
+)
 from map_project_hub.rules.rule_engine import (
     RADIUS_M,
     estimate_dwell,
@@ -109,15 +112,17 @@ async def score_indoor_bonus(
     response_model=ForbiddenZonesResponse,
 )
 async def filter_forbidden_zones(
+    request: Request,
     body: ForbiddenZonesRequest,
 ) -> ForbiddenZonesResponse:
     """POST /v1/rules/filter/forbidden-zones — 금지구역 교차 판정.
 
-    폴리라인이 금지구역과 교차하는지 PostGIS 로 판정한다. 금지구역
-    백엔드(DB) 장애 시 503 을 반환한다. 우회 경로 제안은 PoC 범위에서
-    항상 None 이다.
+    폴리라인이 금지구역과 교차하는지 PostGIS 로 판정한다. 경로 좌표는
+    다른 좌표처럼 봉투 {polyline: [{lat, lng}, ...]} 로만 받는다(평문이면 400).
+    금지구역 백엔드(DB) 장애 시 503 을 반환한다. 우회 경로 제안은 항상
+    None 이다.
     """
-    points = [(p.lat, p.lng) for p in body.polyline]
+    points = resolve_polyline(request, body.loc)
     try:
         zones = await zones_intersecting_polyline(points)
     except Exception as e:

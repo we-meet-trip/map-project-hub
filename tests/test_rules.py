@@ -242,10 +242,10 @@ def test_endpoint_forbidden_zones_intersects(monkeypatch):
         rules_router_mod, "zones_intersecting_polyline", fake
     )
     body = {
-        "polyline": [
+        "loc": sealed(polyline=[
             {"lat": 37.5, "lng": 127.0},
             {"lat": 37.6, "lng": 127.1},
-        ]
+        ])
     }
     resp = _client().post("/v1/rules/filter/forbidden-zones", json=body)
     assert resp.status_code == 200
@@ -264,10 +264,10 @@ def test_endpoint_forbidden_zones_none(monkeypatch):
         rules_router_mod, "zones_intersecting_polyline", fake
     )
     body = {
-        "polyline": [
+        "loc": sealed(polyline=[
             {"lat": 37.5, "lng": 127.0},
             {"lat": 37.6, "lng": 127.1},
-        ]
+        ])
     }
     resp = _client().post("/v1/rules/filter/forbidden-zones", json=body)
     assert resp.status_code == 200
@@ -285,21 +285,33 @@ def test_endpoint_forbidden_zones_db_error_503(monkeypatch):
         rules_router_mod, "zones_intersecting_polyline", boom
     )
     body = {
-        "polyline": [
+        "loc": sealed(polyline=[
             {"lat": 37.5, "lng": 127.0},
             {"lat": 37.6, "lng": 127.1},
-        ]
+        ])
     }
     resp = _client().post("/v1/rules/filter/forbidden-zones", json=body)
     assert resp.status_code == 503
     assert resp.json()["detail"] == "rules backend unavailable"
 
 
-def test_endpoint_forbidden_zones_too_short_422():
-    """폴리라인은 2점 미만이면 422 로 거절된다."""
-    body = {"polyline": [{"lat": 37.5, "lng": 127.0}]}
+def test_endpoint_forbidden_zones_too_short_400():
+    """봉투 안 폴리라인이 2점 미만이면 400 으로 거절된다."""
+    body = {"loc": sealed(polyline=[{"lat": 37.5, "lng": 127.0}])}
     resp = _client().post("/v1/rules/filter/forbidden-zones", json=body)
-    assert resp.status_code == 422
+    assert resp.status_code == 400
+
+
+@pytest.mark.parametrize("point", [{"lat": 10.0, "lng": 127.0}, {"lat": "x", "lng": 127.0}, [37.5, 127.0]])
+def test_endpoint_forbidden_zones_rejects_bad_points(point, monkeypatch):
+    """봉투 안 점이 국내 범위 밖이거나 모양이 틀리면 400 이고 DB 를 부르지 않는다."""
+    async def never(points):
+        raise AssertionError("검증 전에 DB 를 불렀다")
+
+    monkeypatch.setattr(rules_router_mod, "zones_intersecting_polyline", never)
+    body = {"loc": sealed(polyline=[{"lat": 37.5, "lng": 127.0}, point])}
+    resp = _client().post("/v1/rules/filter/forbidden-zones", json=body)
+    assert resp.status_code == 400
 
 
 def test_endpoint_mobility_radius_scooter_uses_kickboard_radius():

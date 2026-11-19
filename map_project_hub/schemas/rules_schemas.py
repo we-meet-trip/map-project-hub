@@ -103,10 +103,10 @@ class IndoorBonusResponse(BaseModel):
 class ForbiddenZonesRequest(BaseModel):
     """ForbiddenZonesRequest — 금지구역 교차 판정 요청.
 
-    polyline: 경로 폴리라인(2~500 점). 각 점은 LatLng.
+    loc: 경로 폴리라인(2~500 점)을 감싼 봉투 {polyline: [{lat, lng}, ...]}.
     """
 
-    polyline: list[LatLng] = Field(min_length=2, max_length=500)
+    loc: str | None = None
 
 
 class ForbiddenZonesResponse(BaseModel):

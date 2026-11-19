@@ -108,6 +108,35 @@ def resolve_legs(request: Request, loc: str | None) -> list:
     return legs
 
 
+def resolve_polyline(request: Request, loc: str | None) -> list[tuple[float, float]]:
+    """경로 폴리라인(2~500 점)을 꺼낸다. 점마다 국내 범위를 다시 본다."""
+    if loc is None:
+        raise _reject("missing sealed polyline")
+    try:
+        payload = open_seal(loc)
+    except SealError as e:
+        raise _reject(str(e)) from e
+    raw = payload.get("polyline")
+    if not isinstance(raw, list) or not 2 <= len(raw) <= 500:
+        raise _reject("polyline out of range")
+    points: list[tuple[float, float]] = []
+    for point in raw:
+        lat = point.get("lat") if isinstance(point, dict) else None
+        lng = point.get("lng") if isinstance(point, dict) else None
+        if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (lat, lng)):
+            raise _reject("polyline point malformed")
+        if not _in_korea(lat, lng):
+            raise _reject("out of range")
+        points.append((float(lat), float(lng)))
+    logger.info(
+        "location seal opened path=%s caller=%s points=%d",
+        request.url.path,
+        request.client.host if request.client else "unknown",
+        len(points),
+    )
+    return points
+
+
 def resolve_origin_and_candidates(
     request: Request, loc: str | None
 ) -> tuple[dict, list]:

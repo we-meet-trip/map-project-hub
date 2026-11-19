@@ -85,8 +85,10 @@ def test_plain_coordinates_are_rejected(path, params, stub_mode):
         ("/v1/rules/filter/mobility-radius", {
             "mobility": "foot", "origin": {"lat": 37.5, "lng": 127.0},
             "candidates": [{"content_id": "a", "lat": 37.5, "lng": 127.0}]}),
+        ("/v1/rules/filter/forbidden-zones", {
+            "polyline": [{"lat": 37.5, "lng": 127.0}, {"lat": 37.6, "lng": 127.1}]}),
     ],
-    ids=["directions", "mobility-radius"],
+    ids=["directions", "mobility-radius", "forbidden-zones"],
 )
 def test_plain_coordinate_bodies_are_rejected(path, body, stub_mode):
     assert _client().post(path, json=body).status_code == 400
