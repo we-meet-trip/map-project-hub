@@ -95,20 +95,20 @@ def test_attached_handler_redacts_coordinates():
 _OUTBOUND_LINES = [
     (
         "HTTP Request: GET https://api.odsay.com/v1/api/searchPubTransPathT"
-        "?SX=127.0&apiKey=REDACTED_ODSAY_KEY"
+        "?SX=127.0&apiKey=FAKEodsayKEYxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         ' "HTTP/1.1 200 OK"',
-        "REDACTED_ODSAY_KEY",
+        "FAKEodsayKEY",
     ),
     (
         "HTTP Request: GET http://openapi.seoul.go.kr:8088"
-        "/REDACTED_SEOUL_OPENDATA_KEY/json/bikeList/1/1000/"
+        "/7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a/json/bikeList/1/1000/"
         ' "HTTP/1.1 200 OK"',
-        "REDACTED_SEOUL_OPENDATA_KEY",
+        "7a7a7a7a7a7a7a7a",
     ),
     (
         "HTTP Request: GET https://apis.data.go.kr/1360000/x"
-        '?serviceKey=REDACTED_DATA_GO_KR_KEY&numOfRows=1 "200 OK"',
-        "REDACTED_DATA_GO_KR_KEY",
+        '?serviceKey=7a7a7a7a7a7a7a7a&numOfRows=1 "200 OK"',
+        "7a7a7a7a7a7a7a7a",
     ),
 ]
 
