@@ -21,14 +21,14 @@ os.environ.setdefault(
     "HUB_DATABASE_URL",
     "postgresql+psycopg://test:test@localhost/test",
 )
-# KMA_SERVICE_KEY — Settings 의 필수 필드. KMAClient 인스턴스화를 위한 더미 값.
-os.environ.setdefault("KMA_SERVICE_KEY", "test-service-key")
-# LOCATION_WIRE_KEY — 좌표 봉투 열쇠(필수). 시험 전용 합성 값(tests/wire.py 와 같은 값).
+# MAP_PROJECT_KMA_SERVICE_KEY — KMAClient 인스턴스화를 위한 더미 값.
+os.environ.setdefault("MAP_PROJECT_KMA_SERVICE_KEY", "test-service-key")
+# MAP_PROJECT_LOCATION_WIRE_KEY — 좌표 봉투 열쇠(필수). 시험 전용 합성 값(tests/wire.py 와 같은 값).
 os.environ.setdefault(
-    "LOCATION_WIRE_KEY", base64.b64encode(b"map-wire-test-key-0000000000000!").decode()
+    "MAP_PROJECT_LOCATION_WIRE_KEY", base64.b64encode(b"map-wire-test-key-0000000000000!").decode()
 )
-# INTERNAL_SERVICE_TOKEN — internal_guard 테스트에서 헤더 일치 시나리오용.
-os.environ.setdefault("INTERNAL_SERVICE_TOKEN", "test-internal-token")
+# MAP_PROJECT_INTERNAL_SERVICE_TOKEN — internal_guard 테스트에서 헤더 일치 시나리오용.
+os.environ.setdefault("MAP_PROJECT_INTERNAL_SERVICE_TOKEN", "test-internal-token")
 
 # map_project_hub.config 는 위 setdefault 가 모두 끝난 뒤에 임포트해야 한다. 먼저 부르면
 # Settings 가 필수 필드를 못 찾고 검증 단계에서 떨어진다.

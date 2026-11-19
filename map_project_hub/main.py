@@ -206,7 +206,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     _configure_logging(settings.LOG_LEVEL)
 
     if settings.AUTH_ENFORCED and settings.PLACES_STUB_MODE:
-        raise RuntimeError("PLACES_STUB_MODE is forbidden when AUTH_ENFORCED=true")
+        raise RuntimeError("HUB_PLACES_STUB_MODE is forbidden when HUB_AUTH_ENFORCED=true")
 
     # 좌표는 봉투로만 받는다. 열쇠가 없으면 좌표가 담긴 요청을 하나도 못 연다.
     require_key()
@@ -218,7 +218,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
         and not settings.INTERNAL_SERVICE_TOKEN.get_secret_value()
     ):
         raise RuntimeError(
-            "AUTH_ENFORCED=true requires INTERNAL_SERVICE_TOKEN"
+            "HUB_AUTH_ENFORCED=true requires MAP_PROJECT_INTERNAL_SERVICE_TOKEN"
         )
 
     try:

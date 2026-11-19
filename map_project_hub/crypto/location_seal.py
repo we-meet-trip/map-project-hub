@@ -76,7 +76,7 @@ def require_key() -> None:
         _key()
     except SealError:
         raise RuntimeError(
-            "LOCATION_WIRE_KEY is required: base64 of 32 random bytes shared with "
+            "MAP_PROJECT_LOCATION_WIRE_KEY is required: base64 of 32 random bytes shared with "
             "user and agent (generate with: openssl rand -base64 32)"
         ) from None
 

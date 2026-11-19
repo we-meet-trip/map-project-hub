@@ -55,7 +55,7 @@ COPY --chown=app:app map_project_hub ./map_project_hub
 COPY --chown=app:app migrations ./migrations
 COPY --chown=app:app alembic.ini ./alembic.ini
 USER app
-RUN --network=none HUB_DATABASE_URL=postgresql+psycopg://build:build@127.0.0.1/build KMA_SERVICE_KEY=build python - <<'PYCODE'
+RUN --network=none HUB_DATABASE_URL=postgresql+psycopg://build:build@127.0.0.1/build python - <<'PYCODE'
 import ctypes.util
 import map_project_hub.main
 from shapely.geometry import Point

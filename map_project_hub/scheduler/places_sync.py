@@ -136,7 +136,7 @@ async def durunubi_sync_loop(force: bool = False) -> None:
             "durunubi sync (stub) total=%d", await count_courses()
         )
         return
-    if missing_key("durunubi sync", key, "TOUR_API_SERVICE_KEY"):
+    if missing_key("durunubi sync", key, "MAP_PROJECT_TOUR_API_SERVICE_KEY"):
         return
 
     num_rows = settings.DURUNUBI_NUMOFROWS

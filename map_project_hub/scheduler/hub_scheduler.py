@@ -159,7 +159,7 @@ async def nowcast_polling_loop() -> None:
     if places_stub_active(key):
         logger.info("nowcast polling skipped — 스텁 모드")
         return
-    if missing_key("nowcast polling", key, "KMA_SERVICE_KEY"):
+    if missing_key("nowcast polling", key, "MAP_PROJECT_KMA_SERVICE_KEY"):
         return
 
     grids = await load_sido_grids()
@@ -248,7 +248,7 @@ async def air_polling_loop() -> None:
     if places_stub_active(air_key):
         logger.info("air polling skipped — 스텁 모드")
         return
-    if missing_key("air polling", air_key, "AIRKOREA_SERVICE_KEY(또는 KMA_SERVICE_KEY)"):
+    if missing_key("air polling", air_key, "HUB_AIRKOREA_SERVICE_KEY(또는 MAP_PROJECT_KMA_SERVICE_KEY)"):
         return
 
     # SIDO_NAME 은 행정구역 정식명칭 → 발급처 표기 대응표다. 값에 중복이
@@ -303,7 +303,7 @@ async def short_term_polling_loop() -> None:
     if places_stub_active(key):
         logger.info("short_term polling skipped — 스텁 모드")
         return
-    if missing_key("short_term polling", key, "KMA_SERVICE_KEY"):
+    if missing_key("short_term polling", key, "MAP_PROJECT_KMA_SERVICE_KEY"):
         return
 
     base_date, base_time = resolve_short_term_base(datetime.now(KST))
@@ -417,7 +417,7 @@ async def mid_term_polling_loop() -> None:
     if places_stub_active(key):
         logger.info("mid_term polling skipped — 스텁 모드")
         return
-    if missing_key("mid_term polling", key, "KMA_SERVICE_KEY"):
+    if missing_key("mid_term polling", key, "MAP_PROJECT_KMA_SERVICE_KEY"):
         return
 
     tm_fc_str = resolve_mid_tm_fc(datetime.now(KST))

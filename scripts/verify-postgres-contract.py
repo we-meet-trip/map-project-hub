@@ -65,7 +65,6 @@ async def worker(source, dsn):
     global PHASE
     PHASE = 'hub_imports'
     sys.path.insert(0, str(source))
-    os.environ['KMA_SERVICE_KEY'] = 'fixture-unused'
     os.environ['HUB_DATABASE_URL'] = dsn.replace('postgresql://', 'postgresql+psycopg://')
     from map_project_hub.db.hub_db import get_hub_db, dispose_hub_db
     from map_project_hub.db.schema_contract import validate_runtime_schema

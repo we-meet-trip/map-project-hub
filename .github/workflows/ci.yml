@@ -28,7 +28,6 @@ jobs:
     timeout-minutes: 30
     env:
       HUB_DATABASE_URL: postgresql+psycopg://ci:ci@127.0.0.1/ci
-      KMA_SERVICE_KEY: ci-placeholder
     steps:
       - uses: actions/checkout@v4
         with:

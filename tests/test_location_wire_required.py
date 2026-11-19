@@ -49,7 +49,7 @@ def test_lifespan_refuses_to_start_without_key(monkeypatch):
         async with main.lifespan(main.app):
             pass
 
-    with pytest.raises(RuntimeError, match="LOCATION_WIRE_KEY"):
+    with pytest.raises(RuntimeError, match="MAP_PROJECT_LOCATION_WIRE_KEY"):
         asyncio.run(run())
 
 

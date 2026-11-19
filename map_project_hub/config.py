@@ -12,7 +12,7 @@
 """
 from __future__ import annotations
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     model_config: .env 파일을 utf-8 로 읽고, 정의되지 않은 키는 무시한다
         (extra="ignore"). 다른 서비스(user/agent)와 .env 를 공유할 때
         무관한 키를 만나도 검증 에러가 나지 않도록 하기 위함이다.
+
+    환경변수 이름: hub 만 읽는 값은 `HUB_` 접두(env_prefix)를 붙여 읽는다 —
+        예: 필드 ODSAY_API_KEY ← 환경변수 HUB_ODSAY_API_KEY. 여러 서비스가 함께
+        읽는 키·주소·토큰은 공용 접두 `MAP_PROJECT_` 이름을 validation_alias 로
+        직접 지정한다(MAP_PROJECT_KMA_SERVICE_KEY 등). 이름이 이미 HUB_ 로
+        시작하는 필드도 alias 로 그대로 둔다(HUB_DATABASE_URL).
 
     [필수 - 환경변수에서 반드시 주입되어야 하는 값]
     HUB_DATABASE_URL: SQLAlchemy 비동기 DSN. asyncpg 또는 psycopg_async
@@ -59,19 +65,22 @@ class Settings(BaseSettings):
         요구한다. 기본 false = 현행 데모 동작(공개 endpoint 무인증).
     """
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore",
+        env_prefix="HUB_", populate_by_name=True,
+    )
 
-    HUB_DATABASE_URL: str
+    HUB_DATABASE_URL: str = Field(validation_alias="HUB_DATABASE_URL")
     # 시크릿은 SecretStr 로 감싸 로그/repr 노출을 방지한다(사용 시 .get_secret_value()).
-    KMA_SERVICE_KEY: SecretStr = SecretStr("")
-    INTERNAL_SERVICE_TOKEN: SecretStr = SecretStr("")
-    HUB_ADMIN_INTERNAL_TOKEN: SecretStr = SecretStr("")
+    KMA_SERVICE_KEY: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_KMA_SERVICE_KEY")
+    INTERNAL_SERVICE_TOKEN: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_INTERNAL_SERVICE_TOKEN")
+    HUB_ADMIN_INTERNAL_TOKEN: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_HUB_ADMIN_INTERNAL_TOKEN")
 
     # 서비스 사이를 오가는 좌표를 감싸는 데 쓰는 열쇠(필수). BFF·agent 와 같은
     # 값을 나눠 가진다. 비어 있거나 형식이 틀리면 부팅을 멈춘다 — 좌표는 봉투로만
     # 받고 평문으로 받는 길은 없다.
     # 32바이트로 풀리는 base64 여야 한다: openssl rand -base64 32
-    LOCATION_WIRE_KEY: SecretStr = SecretStr("")
+    LOCATION_WIRE_KEY: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_LOCATION_WIRE_KEY")
 
     # 격자 사이 간격. 구독 격자가 시군구 단위로 늘어난 뒤로는 한 라운드가
     # 곧 격자 수 × 이 값이라, 1.5 초로 두면 한 바퀴에만 시간 예산의 삼분의
@@ -88,7 +97,7 @@ class Settings(BaseSettings):
     # KAKAO_REST_API_KEY 가 빈 문자열이면 실제 호출 대신 고정 스텁 응답을
     # 사용한다(키 발급 전 인터페이스 검증용). 좌표 검색 반경/페이지 크기는
     # 카카오가 허용하는 상한(radius 20000m, size 15) 안에서 기본값을 둔다.
-    KAKAO_REST_API_KEY: SecretStr = SecretStr("")
+    KAKAO_REST_API_KEY: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_KAKAO_REST_API_KEY")
     KAKAO_REQUEST_TIMEOUT_SEC: float = 5.0
     KAKAO_CACHE_TTL_SEC: int = 3600
     KAKAO_DEFAULT_RADIUS_M: int = 5000
@@ -98,7 +107,7 @@ class Settings(BaseSettings):
     # TOUR_API_SERVICE_KEY 가 빈 문자열이면 스텁 응답을 사용한다.
     # 코스 데이터는 주기 동기화로 미리 적재하며, 좌표가 응답에 없어
     # 각 코스의 GPX 파일을 내려받아 대표 좌표를 계산한다.
-    TOUR_API_SERVICE_KEY: SecretStr = SecretStr("")
+    TOUR_API_SERVICE_KEY: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_TOUR_API_SERVICE_KEY")
     DURUNUBI_REQUEST_TIMEOUT_SEC: float = 10.0
     DURUNUBI_NUMOFROWS: int = 100
     DURUNUBI_SYNC_INTERVAL_HOURS: int = 168
@@ -111,8 +120,8 @@ class Settings(BaseSettings):
     # 사용한다(키 발급 전 인터페이스 검증용). 두 시크릿은 요청 헤더
     # (X-Naver-Client-Id / X-Naver-Client-Secret)로만 전달되며 URL 쿼리에는
     # 실리지 않는다.
-    NAVER_CLIENT_ID: SecretStr = SecretStr("")
-    NAVER_CLIENT_SECRET: SecretStr = SecretStr("")
+    NAVER_CLIENT_ID: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_NAVER_CLIENT_ID")
+    NAVER_CLIENT_SECRET: SecretStr = Field(SecretStr(""), validation_alias="MAP_PROJECT_NAVER_CLIENT_SECRET")
     NAVER_BLOG_TIMEOUT_SEC: float = 3.0
     # 블로그 리뷰 결과 L1 캐시 TTL(6시간).
     NAVER_BLOG_CACHE_TTL_SEC: int = 21600
@@ -309,8 +318,8 @@ class Settings(BaseSettings):
     # 빈 문자열이면 실제 호출 대신 결정적 스텁 지오메트리를 사용한다(데이터
     # 빌드 전 인터페이스 검증용). mode→인스턴스 선택: walk→FOOT,
     # bicycle/scooter→BICYCLE. transit(버스)은 라우팅 대상이 아니다.
-    OSRM_FOOT_BASE_URL: str = ""
-    OSRM_BICYCLE_BASE_URL: str = ""
+    OSRM_FOOT_BASE_URL: str = Field("", validation_alias="MAP_PROJECT_OSRM_FOOT_BASE_URL")
+    OSRM_BICYCLE_BASE_URL: str = Field("", validation_alias="MAP_PROJECT_OSRM_BICYCLE_BASE_URL")
     OSRM_TIMEOUT_SEC: float = 3.0
     # Expected OSRM response data_version (osmosis timestamp); empty supports legacy graphs.
     OSRM_DATA_VERSION: str = ""
@@ -323,11 +332,13 @@ class Settings(BaseSettings):
 
     # [장소 결과 L1 캐시 - Redis]
     # 카카오 검색 결과를 짧게 캐싱해 동일 질의의 반복 외부 호출을 줄인다.
-    REDIS_URL: str = "redis://redis:6379"
-    REDIS_DB_CACHE: int = 4
+    REDIS_URL: str = Field("redis://redis:6379", validation_alias="MAP_PROJECT_REDIS_URL")
+    # 관리 콘솔도 같은 번호를 읽어 캐시를 진단한다.
+    REDIS_DB_CACHE: int = Field(4, validation_alias="MAP_PROJECT_REDIS_DB_HUB_CACHE")
 
-    HUB_INTERNAL_TRUSTED_CIDRS: str = (
-        "172.16.0.0/12,10.0.0.0/8,192.168.0.0/16"
+    HUB_INTERNAL_TRUSTED_CIDRS: str = Field(
+        "172.16.0.0/12,10.0.0.0/8,192.168.0.0/16",
+        validation_alias="HUB_INTERNAL_TRUSTED_CIDRS",
     )
 
     # true 면 /v1/* 공개 endpoint 도 X-Internal-Token 을 요구한다.
